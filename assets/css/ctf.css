@@ -1,0 +1,166 @@
+.challengeBox {
+	margin-bottom: 15px;
+	background-color: white;
+	padding: 20px 30px 20px 30px;
+	word-break: break-word;
+	word-wrap: break-word;
+	font-size: 18px;
+	color: #404040;
+	box-shadow: 0 2px 3px rgba(8,8,8,0.1), 0 0 0 1px rgba(8,8,8,0.1);
+	display: flex;
+	flex-direction: column;
+	box-sizing: border-box;
+	font-size: 1rem;
+	border-radius: 25px;
+}
+
+.chal-title {
+	font-weight: 600;
+}
+
+.chal-category {
+	font-size: 18px;
+	transform-origin: 0 0;
+  	transform: rotate(90deg);
+	width:50%;
+	height:30%;
+	text-align:center;
+}
+
+.chal-author {
+	margin-top: 5px;
+	font-size: 14px;
+}
+
+.chal-leftcard {
+	text-align: right;
+}
+
+.chal-solves{
+	font-weight: 600;
+}
+
+.chal-divider {
+	border-top: .1rem solid rgb(8 8 8 / 30%);
+	width: 80%;
+	margin-top: 10px;
+	margin-bottom: 15px;
+	margin-left: 10%;
+}
+
+.chal-des {
+	font-size: 15px;
+	line-height: 1.8;
+}
+
+.chal-code {
+	margin-top: 8px;
+}
+
+code {
+    padding: .2em .4em;
+    border-radius: 3px;
+    background-color: #F9F9F9;
+    border: 1px solid rgb(8 8 8 / 30%);
+}
+
+.chal-submit {
+	margin-top: 20px;
+}
+
+.input-success {
+    background-color: rgba(0,224,0,0.1)!important;
+    border-color: #00c84c!important;
+}
+
+.chal-downloads {
+	font-size: 14px;
+}
+
+.tag-container {
+	background-color: #F0F0F0;
+	-ms-flex-align: center;
+    align-items: center;
+    border-radius: .25rem;
+    color: var(--cirrus-fg);
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+    font-size: 75%;
+    line-height: 1.5;
+    min-height: 1.5rem;
+    padding: 0 .5rem;
+    white-space: nowrap;
+    margin-right: 15px;
+}
+
+a.ctflink:active, a.ctflink:hover, a.ctflink:visited {
+	-webkit-backface-visibility: hidden;
+	backface-visibility: hidden;
+	text-decoration: none;
+}
+a.ctflink:hover {
+	color: #277edb;
+}
+a.ctflink, a.ctflink:hover {
+	transition: .3s;
+}
+a.ctflink {
+	color: #39a5ed;
+	font-weight: 650;
+	padding: 2px;
+	text-decoration: none;
+}
+
+.ctf-toast {
+    display: block;
+    width: 100%;
+    padding: .75rem 1.25rem;
+    background-color: rgba(255,255,255,0.9);
+    border: 1px solid rgba(100,100,100,0.9);
+    border-radius: 2px;
+    margin: .5rem;
+    position: fixed;
+    top: 1em;
+    right: 1em;
+    z-index: 9999;
+    width: 320px;
+}
+
+.toast {
+	color: black;
+	font-size: 16px;
+}
+
+.scoreboard {
+	font-size: 15px;
+	border-radius:25px;
+	-moz-border-radius:25px;
+	border-spacing: 0;
+}
+
+.table thead, .table thead th {
+	border-bottom: 2px solid rgba(150,150,150,0.9);
+}
+
+.table td {
+	padding: .5rem 1rem;
+}
+
+.profile-des {
+	margin-top: 25px;
+	font-size: 20px;
+}
+
+.profile-des span {
+	margin-right: 30px;
+}
+
+.profile-card {
+	width: 75%;
+	margin-left: 12.5%;
+}
+
+.profile-solve thead {
+	border: none;
+}
+
