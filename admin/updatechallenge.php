@@ -4,14 +4,14 @@
 
     if(($_SESSION['logintoken'] === $configjson['adminusername']) && isset($_POST['oldchallengename']) && isset($_POST['challengename']) && isset($_POST['challengedescription']) && isset($_POST['challengeauthor']) && isset($_POST['providedfile']) && isset($_POST['solutionflag']) && isset($_POST['category']) && isset($_POST['basescore']))
     {
-        $oldchallengename = $_POST['oldchallengename'];
-        $challengename = $_POST['challengename'];
-        $challengedescription = $_POST['challengedescription'];
-        $challengeauthor = $_POST['challengeauthor'];
-        $providedfile = $_POST['providedfile'];
+        $oldchallengename = mysql_real_escape_string($_POST['oldchallengename']);
+        $challengename = mysql_real_escape_string($_POST['challengename']);
+        $challengedescription = mysql_real_escape_string($_POST['challengedescription']);
+        $challengeauthor = mysql_real_escape_string($_POST['challengeauthor']);
+        $providedfile = mysql_real_escape_string($_POST['providedfile']);
         $solutionflag = $_POST['solutionflag'];
-        $category = $_POST['category'];
-        $basescore = $_POST['basescore'];
+        $category = mysql_real_escape_string($_POST['category']);
+        $basescore = mysql_real_escape_string($_POST['basescore']);
 
         $solutionflaghash = password_hash($solutionflag, PASSWORD_DEFAULT);
 

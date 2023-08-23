@@ -3,8 +3,8 @@
 
     if(isset($_POST['username']) && isset($_POST['password']) && isset($_POST['retypepassword']))
     {
-        $username = $_POST['username'];
-        $email = $_POST['email'];
+        $username = mysql_real_escape_string($_POST['username']);
+        $email = mysql_real_escape_string($_POST['email']);
         $password = $_POST['password'];
         $retypepassword = $_POST['retypepassword'];
         $username = str_replace("::::", "", $username);
@@ -20,14 +20,14 @@
 	    $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
         $count = mysqli_num_rows($result);
 
-        if ($count == 0) 
+        if ($count == 0)
         {
             $checkquery2 = "SELECT * FROM users WHERE email='$email';";
             $result2 = mysqli_query($conn, $checkquery2);
             $row2 = mysqli_fetch_array($result2, MYSQLI_ASSOC);
             $count2 = mysqli_num_rows($result2);
 
-            if ($count2 == 0) 
+            if ($count2 == 0)
             {
                 $query = "INSERT INTO users (username, password, email, team) VALUES ('$username', '$passwordhash', '$email', NULL);";
                 $query_run = mysqli_query($conn, $query);
