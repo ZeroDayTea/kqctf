@@ -1,6 +1,6 @@
 <?php
-    include("config.php");
-    include("session.php");
+    include("../config/config.php");
+    include("../user/session.php");
 
     $infoJSON = isset($_POST['infoJSON'])?$_POST['infoJSON']:'';
     $infoArray = json_decode($_POST['infoJSON']);
@@ -19,9 +19,9 @@
             $teamquery = "SELECT team FROM users WHERE username='$username';";
             $teamresult = mysqli_query($conn, $teamquery);
             $teamrow = mysqli_fetch_array($teamresult, MYSQLI_ASSOC);
-            $teamname = $teamrow['team'];
+            $team = $teamrow['team'];
 
-            $checksolvequery = "SELECT * FROM solvedchallenges WHERE solvedbyteam='$teamname' AND challengename='$challengename';";
+            $checksolvequery = "SELECT * FROM solvedchallenges WHERE solvedbyteam=$team AND challengename='$challengename';";
             $checksolveresult = mysqli_query($conn, $checksolvequery);
             $teamsolves = mysqli_num_rows($checksolveresult);
             if(!($teamsolves > 0))
@@ -33,21 +33,21 @@
 
                 $pointsvalue = CTFCCCFormula($challengescore, $solves);
 
-                $getpointsquery = "SELECT points FROM teams WHERE teamname='$teamname';";
+                $getpointsquery = "SELECT points FROM teams WHERE teamid=$team;";
                 $getpointsresult = mysqli_query($conn, $getpointsquery);
                 $getpointsrow = mysqli_fetch_array($getpointsresult, MYSQLI_ASSOC);
                 $teampoints = (int)$getpointsrow['points'];
                 $teampoints += $pointsvalue;
 
-                $addpointsquery = "UPDATE teams SET points='$teampoints' WHERE teamname='$teamname';";
-                if (!mysqli_query($conn, $addpointsquery)) 
+                $addpointsquery = "UPDATE teams SET points=$teampoints WHERE teamid=$team;";
+                if (!mysqli_query($conn, $addpointsquery))
                 {
                     echo "Error Submitting Flag";
                 }
                 else
-                {            
+                {
                     //add check if chall was already solved by team
-                    $insertsolvequery = "INSERT INTO solvedchallenges VALUES ('$challengename', '$teamname', NOW());";
+                    $insertsolvequery = "INSERT INTO solvedchallenges (challengename, solvedbyteam, solvetime) VALUES ('$challengename', $team, NOW());";
                     if(!mysqli_query($conn, $insertsolvequery))
                     {
                         echo "Error Submitting Flag";
@@ -55,7 +55,7 @@
                     else
                     {
                         updateTeamPoints($conn, $challengename);
-                        $updatesolvesquery = "UPDATE challenges SET solves='$solves' WHERE challengename='$challengename';";
+                        $updatesolvesquery = "UPDATE challenges SET solves=$solves WHERE challengename='$challengename';";
                         if(!mysqli_query($conn, $updatesolvesquery))
                         {
                             echo "Error Submitting Flag";
@@ -65,16 +65,12 @@
                             echo "Correct!";
                         }
                     }
-
-                    
                 }
             }
             else
             {
                 echo "You already solved this challenge!";
             }
-
-            
         }
         else
         {
@@ -85,6 +81,4 @@
     {
         echo "Error Submitting Flag";
     }
-    
-
 ?>

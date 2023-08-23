@@ -1,6 +1,6 @@
 <?php
-    include("session.php");
-    include("config.php");
+    include("../user/session.php");
+    include("../config/config.php");
 
     $challengequery = "SELECT * FROM challenges WHERE released=true;";
     $challengeresult = mysqli_query($conn, $challengequery);
@@ -10,13 +10,13 @@
     $pwncount = 0;
     $revcount = 0;
     $webcount = 0;
-  
+
     $username = $_SESSION['logintoken'];
     $teamquery = "SELECT team FROM users WHERE username='$username';";
     $teamresult = mysqli_query($conn, $teamquery);
     $teamrow = mysqli_fetch_array($teamresult, MYSQLI_ASSOC);
-    $teamname = $teamrow['team'];
-  
+    $team = $teamrow['team'];
+
     while($challengerow = mysqli_fetch_array($challengeresult, MYSQLI_ASSOC))
     {
       $count += 1;
@@ -41,8 +41,8 @@
         $webcount += 1;
       }
     }
-  
-    $solvedquery = "SELECT * FROM solvedchallenges WHERE solvedbyteam='$teamname';";
+
+    $solvedquery = "SELECT * FROM solvedchallenges WHERE solvedbyteam=$team;";
     $solvedresult = mysqli_query($conn, $solvedquery);
     $solvedcount = 0;
     $solvedcryptocount = 0;
@@ -50,14 +50,14 @@
     $solvedpwncount = 0;
     $solvedrevcount = 0;
     $solvedwebcount = 0;
-  
+
     while($solvedrow = mysqli_fetch_array($solvedresult, MYSQLI_ASSOC))
     {
       $challname = $solvedrow['challengename'];
       $solvedchallengequery = "SELECT * FROM challenges WHERE released=true AND challengename='$challname';";
       $solvedchallengeresult = mysqli_query($conn, $challengequery);
       $solvedchallengerow = mysqli_fetch_array($solvedchallengeresult, MYSQLI_ASSOC);
-  
+
       $solvedcount += 1;
       if($solvedchallengerow["category"] === 'crypto')
       {
@@ -90,6 +90,4 @@
 
     $solves = [$total, $crypto, $forensics, $pwn, $rev, $web];
     print json_encode($solves);
-  
-    
 ?>

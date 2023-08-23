@@ -1,5 +1,5 @@
 <?php
-    include("config.php");
+    include("../config/config.php");
 
     if(isset($_POST['username']) && isset($_POST['password']) && isset($_POST['retypepassword']))
     {
@@ -29,7 +29,7 @@
 
             if ($count2 == 0) 
             {
-                $query = "INSERT INTO users (username, password, email, team) VALUES ('$username', '$passwordhash', '$email', '');";
+                $query = "INSERT INTO users (username, password, email, team) VALUES ('$username', '$passwordhash', '$email', NULL);";
                 $query_run = mysqli_query($conn, $query);
 
                 if($query_run)

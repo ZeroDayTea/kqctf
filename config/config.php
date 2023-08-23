@@ -1,13 +1,28 @@
 <?php
+    $currentdir = "";
+    if(DIRECTORY_SEPARATOR === '/') {
+        // unix, linux, mac
+        $currentdir = __DIR__ . "/";
+    }
+
+    if(DIRECTORY_SEPARATOR === '\\') {
+        // windows
+        $currentdir = addslashes(__DIR__) . "\\\\";
+    }
+    $configjson = json_decode(file_get_contents($currentdir . "config.json"), true);
+
     define('DB_SERVERNAME', 'localhost');
-    define('DB_USERNAME', 'kquser');
-    define('DB_PASSWORD', ''); // load db password from file or environment variable that is not in the repo when implementing this framework
-    define('DB_DATABASENAME', 'kqctf');
+    define('DB_USERNAME', $configjson["db_username"]);
+    define('DB_PASSWORD', $configjson["db_password"]);
+    define('DB_DATABASENAME',$configjson["db_databasename"]);
     $conn = mysqli_connect(DB_SERVERNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASENAME);
 
     if ($conn->connect_error) {
         die("Database connection failed: " . $conn->connect_error);
     }
+
+    $_SESSION["ctfname"] = $configjson["ctfname"];
+    $_SESSION["discordlink"] = $configjson["discordlink"];
 
     function CTFCCCFormula($pts,$cnt) {
         $base = $pts * 0.2;

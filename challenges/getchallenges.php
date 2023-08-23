@@ -1,6 +1,6 @@
 <?php
-    include("config.php");
-    include("session.php");
+    include("../config/config.php");
+    include("../user/session.php");
 
     $checkedJSON = isset($_POST['checkedJSON'])?$_POST['checkedJSON']:'';
     $checkedArray = json_decode($_POST['checkedJSON']);
@@ -11,11 +11,11 @@
     $teamresult = mysqli_query($conn, $teamquery);
     $teamrow = mysqli_fetch_array($teamresult, MYSQLI_ASSOC);
     $teamname = $teamrow['team'];
-    
+
     $query = "SELECT challenges.category, challenges.challengename, challenges.challengeauthor, challenges.challengedescription, challenges.basescore, challenges.providedfile FROM challenges";
     $where = "";
     for($i = 1; $i < count($checkedArray); $i++)
-    {   
+    {
         if($checkedArray[$i])
         {
             if($where == "")
@@ -28,9 +28,9 @@
             }
         }
     }
-    
+
     $join = "";
-    
+
     if(!$checkedArray[0])
     {
         $join = " LEFT JOIN solvedchallenges ON solvedchallenges.challengename=challenges.challengename AND solvedchallenges.solvedbyteam='$teamname'";
@@ -50,7 +50,7 @@
         else
         {
             $query .= " WHERE challenges.released=true ORDER BY challenges.solves DESC;";
-        } 
+        }
     }
     else
     {
@@ -88,21 +88,21 @@
             <div class='col-6'>
                 <!--<div class='chal-category'> $challengecategory <br></div>-->
                 <div class='chal-title' name='$challengename'> $challengename <br></div>
-                <div class='chal-author'> $challengeauthor </div> 
+                <div class='chal-author'> $challengeauthor </div>
                 </div>
-                <div class='col-6 chal-leftcard'> 
+                <div class='col-6 chal-leftcard'>
                 <a href='ctfpage.php?page=challenges' target='_blank' class='chal-solves'> $solves solves /  $pointsvalue points</a>
-                </div> 
-            </div> 
+                </div>
+            </div>
             <div class='chal-divider'></div>
-            <div class='chal-des'> 
+            <div class='chal-des'>
                 $challengedescription
-                <div class='input-group mb-3 chal-submit'> 
-                <input autocomplete='off' autocorrect='off' type='text' class='form-control' placeholder='kqctf{flag}' aria-label='Flag' aria-describedby='flag-btn-' style='background: #FAFAFA' name='flaginput' id='flaginput'> 
-                <div class='input-group-append''> 
-                    <button class='btn btn-outline-secondary' type='button' name='checkflagbtn' onClick='checkFlag(event);'>Submit</button> 
-                </div> 
-                </div> 
+                <div class='input-group mb-3 chal-submit'>
+                <input autocomplete='off' autocorrect='off' type='text' class='form-control' placeholder='kqctf{flag}' aria-label='Flag' aria-describedby='flag-btn-' style='background: #FAFAFA' name='flaginput' id='flaginput'>
+                <div class='input-group-append''>
+                    <button class='btn btn-outline-secondary' type='button' name='checkflagbtn' onClick='checkFlag(event);'>Submit</button>
+                </div>
+                </div>
             </div>
             ";
             if($challengefile != "" and !empty($challengefile))

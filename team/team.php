@@ -6,36 +6,14 @@
       $userrow = mysqli_fetch_array($result, MYSQLI_ASSOC);
       $team = $userrow['team'];
 
-      if($userrow['verified'] == false || !isset($userrow['verified']) || empty($userrow['verified']))
+      if($team === NULL)
       {
-        echo '
-        <div class="col-lg-6 center" >
-            <form class="input-forms" action="./verifyteams.php" method="post">
-              <div class="section-title">
-                <h3><span>Team Verification:</span></h3>
-              </div>
-              <div class="form-group">
-                <input type="password" class="form-control" name="teampassword" placeholder="Team Password" required>
-              </div>
-              <br>
-              <div class="text-center"><button type="submit" class="btn btn-primary">Verify</button></div>';
-              if(isset($_GET['error']) && $_GET['error'] == 'incorrectjoin') {echo '<br><h5 style="color:red; text-align:center"> Username/Password combination is incorrect </h5>';}
-              if(isset($_GET['error']) && $_GET['error'] == 'adminerrorjoin') {echo '<br><h5 style="color:red; text-align:center"> Something went wrong. Please contact an admin </h5>';}
-              if(isset($_GET['error']) && $_GET['error'] == 'teamfull') {echo '<br><h5 style="color:red; text-align:center"> That team is full </h5>';}
-              echo '
-            </form>
-          </div> ';
-      }
-      else
-      {
-        if(!isset($team) || empty($team))
-        {
         echo '
         <section id="login" class="login" >
         <div class="container" data-aos="fade-up">
         <div class="row" data-aos="fade-up" data-aos-delay="100" >
-          <!--<div class="col-lg-6 center" >
-            <form class="input-forms" action="./registerteamsub.php" method="post">
+          <div class="col-lg-6 center" >
+            <form class="input-forms" action="/team/registerteamsub.php" method="post">
             <div class="section-title">
               <h3><span>Register New Team:</span></h3>
             </div>
@@ -73,10 +51,10 @@
               if(isset($_GET['error']) && $_GET['error'] == 'adminerror') {echo '<br><h5 style="color:red; text-align:center"> Something went wrong. Please contact an admin </h5>';}
               echo '
             </form>
-          </div>-->
-          
+          </div>
+
           <div class="col-lg-6 center" >
-            <form class="input-forms" action="./jointeamsub.php" method="post">
+            <form class="input-forms" action="/team/jointeamsub.php" method="post">
               <div class="section-title">
                 <h3><span>Join Existing Team:</span></h3>
               </div>
@@ -95,7 +73,7 @@
               if(isset($_GET['error']) && $_GET['error'] == 'teamfull') {echo '<br><h5 style="color:red; text-align:center"> That team is full </h5>';}
               echo '
             </form>
-          </div>  
+          </div>
         </div>
       </div>
       </section>
@@ -103,7 +81,7 @@
       }
       else
       {
-        $query = "SELECT * FROM teams WHERE teamname='$team';";
+        $query = "SELECT * FROM teams WHERE teamid='$team';";
         $result = mysqli_query($conn, $query);
         $teamrow = mysqli_fetch_array($result, MYSQLI_ASSOC);
         $teamname = htmlspecialchars($teamrow['teamname'], ENT_QUOTES, 'UTF-8');
@@ -114,7 +92,7 @@
 
         $solvedchallsquery = "SELECT * FROM solvedchallenges WHERE solvedbyteam='$team';";
         $solvedchallsresult = mysqli_query($conn, $solvedchallsquery);
-        
+
         echo "
         <div class=\"section-title\">
         <h2>Team Information: </h2>
@@ -171,12 +149,11 @@
               ";
               $challscounter += 1;
             }
-              
+
           echo "
             </tbody>
           </table>
         </div>
         ";
       }
-      } 
 ?>

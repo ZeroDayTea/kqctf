@@ -2,16 +2,16 @@
     <div style="width: 800px; margin: 0 auto;">
       <section id="hero" class="d-flex align-items-center">
         <div class="container" data-aos="zoom-out" data-aos-delay="100" style="text-align:center">
-          <img src="./assets/img/logo.png" alt="Killer Queen Logo" width="300" height="374">
+          <img src="/assets/img/logo.png" alt="Logo" width="300" height="374">
           <br><br><br>
-          <h1><span>Killer Queen CTF</span></h1>
+          <h1><span><?php echo $_SESSION["ctfname"] ?> CTF</span></h1>
         </div>
       </section>
       <script>
             if (window.outerWidth > 900) {
               document.write('<div>');
               document.write('<script src="https://cdn.logwork.com/widget/countdown.js"><\/script>');
-              document.write('<a target=\"_blank\" href=\"https://logwork.com/countdown-q5ih\" class=\"countdown-timer\" data-timezone=\"America/Denver\" data-textcolor=\"#f8f8f8\" data-date=\"2021-10-29 08:00\" data-background=\"#494949\" data-digitscolor=\"#d4595a\" data-unitscolor=\"#b8b8b8\">&#160<\/a>');
+              document.write('<a target=\"_blank\" href=\"https://logwork.com/countdown-q5ih\" class=\"countdown-timer\" data-timezone=\"America/Denver\" data-textcolor=\"#f8f8f8\" data-date=\"2023-08-25 08:00\" data-background=\"#494949\" data-digitscolor=\"#d4595a\" data-unitscolor=\"#b8b8b8\">&#160<\/a>');
               document.write('<\/div>');
             }
       </script>
@@ -28,14 +28,6 @@
       <div class="container" data-aos="fade-up">
 
         <div class="row">
-        <div class="col-md-6 col-lg-4 d-flex align-items-stretch mb-5 mb-lg-0">
-            <div class="icon-box" data-aos="fade-up" data-aos-delay="100">
-              <div class="icon"> <img src="./assets/img/sponsors/dupperlogo.png" alt="TOF Logo" width="30%" > </div>
-              <h4 class="title"><a href="https://www.dupperanalytics.com/">Dupper Analytics</a></h4>
-              <p class="description">Dupper Analytics helps small and medium size businesses by developing SaaS products built by a team of high schooler developers. They value cybersecurity skills and>
-            </div>
-          </div>
-
           <div class="col-md-6 col-lg-4 d-flex align-items-stretch mb-5 mb-lg-0">
               <div class="icon-box" data-aos="fade-up" data-aos-delay="100">
                 <div class="icon"> <img src="./assets/img/sponsors/trail-of-bits-dark-alt.png" alt="TOF Logo" width="40%" > </div>
@@ -107,9 +99,9 @@
                 <p>-->‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ Middle School division is open to US-based 8th graders and younger</p>
                 <p>-->‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏High School division is open to US-based high school seniors and younger</p>
                 <p>-->‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ Open/College is well...open to all!</p>
- 
+
               <br>
-               
+
               </div>
             </li>
             <li>
@@ -158,40 +150,7 @@
     <br>
     <section class="about section-bg">
       <div class="container" data-aos="fade-up">
-        <div class="section-title">
-          <h2>Welcome</h2>
-          <h3>CTF Information</span></h3>
-        </div>
-
-        <div class="col-lg-15 pt-4 pt-lg-2 content d-flex flex-column justify-content-center" data-aos="fade-up" data-aos-delay="100">
-          <h3></h3>
-          <p class="fst-italic">
-            Some info about CTFs...
-          </p>
-          <ul>
-            <li>
-              <div>
-                <h5>What is a CTF?</h5>
-                <p>CTF stands for "Capture The Flag" which are a type of cybersecurity competition intended to teach about computer science and computer security. They involve participants exploiting common vulnerabilities found on web applications, pieces of software, cryptographic methods, networks, and other computer topics in order to gain a "flag" or proof that they successfully completed a particular challenge. Here are some great links to help you understand what a ctf is:</p>
-                <p>-->‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏<a href="https://ctftime.org/ctf-wtf/">https://ctftime.org/ctf-wtf/</a> </p>
-                <p>-->‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏<a href="https://dev.to/atan/what-is-ctf-and-how-to-get-started-3f04">https://dev.to/atan/what-is-ctf-and-how-to-get-started-3f04</a> </p> 
-                <p>-->‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏<a href="https://ctfd.io/whats-a-ctf/">https://ctfd.io/whats-a-ctf/</a> </p> 
-                <p>-->‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏<a href="https://ctf101.org/">https://ctf101.org/</a> </p> 
-
-              </div>
-            </li>
-            <li>
-              <div>
-                <h5>What if I\'ve never competed in a CTF before?</h5>
-                <p> Killer Queen CTF will have a variety of challenges ranging from the simplest of topics to challenges difficult for even experienced players. Feel free to sign up and compete even if it would be your first time. We\'d love to have Killer Queen CTF as your introductory CTF bringing you into this amazing field :)</p>
-              </div>
-            </li>
-          </ul>
-        </div>
-
-        <br><br><br>
         <p style="text-align: center"> Front-end visuals of site inspired by the work of DefyGG and the rctf CTF platform </p>
       </div>
     </section>
     <br>
-    

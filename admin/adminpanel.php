@@ -1,8 +1,8 @@
 <?php
-  include("session.php");
-  include("config.php");
+  include("../user/session.php");
+  include("../config/config.php");
   $username = $_SESSION['logintoken'];
-  if($username === '[addadminusername]')
+  if($username === $configjson["adminusername"])
   {
     echo "Authorized!";
   }
@@ -19,24 +19,24 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>Killer Queen CTF</title>
+  <title><?php echo $_SESSION["ctfname"] ?> CTF</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
-  <link href="../assets/img/favicon.png" rel="icon">
-  <link href="../assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+  <link href="/assets/img/favicon.png" rel="icon">
+  <link href="/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
 
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Roboto:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
 
-  <link href="../assets/vendor/aos/aos.css" rel="stylesheet">
-  <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-  <link href="../assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
-  <link href="../assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
-  <link href="../assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.1/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/boxicons/2.1.4/css/boxicons.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/glightbox/3.2.0/css/glightbox.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/10.2.0/swiper-bundle.min.css" rel="stylesheet">
 
-  <link href="../assets/css/style.css" rel="stylesheet">
-  <link href="../assets/css/ctf.css" rel="stylesheet">
+  <link href="/assets/css/style.css" rel="stylesheet">
+  <link href="/assets/css/ctf.css" rel="stylesheet">
 
 </head>
 
@@ -45,12 +45,12 @@
   <header id="header" class="d-flex align-items-center">
     <div class="container d-flex align-items-center justify-content-between">
 
-      <h1 class="logo"><a href="../ctfpage.php?page=home">Killer Queen CTF<span>.</span></a></h1>
+      <h1 class="logo"><a href="../ctfpage.php?page=home"><?php echo $_SESSION["ctfname"] ?> CTF<span>.</span></a></h1>
 
 
       <nav id="navbar" class="navbar">
         <ul>
-          <a target="_blank" href="https://discord.gg/XV9S2nucbZ"><img src="../assets/img/discord.png" style="width:50px; padding-right:25%"></a>
+      <a href="<?php echo $_SESSION['discordlink'] ?>"><img src="/assets/img/discord.png" style="width:50px; padding-right:25%"></a>
           <li><a class="nav-link scrollto <?php if($_SESSION['pagetodisplay'] == 'home') {echo "active";} ?>" href="../ctfpage.php?page=home">Home</a></li>
           <li><a class="nav-link scrollto <?php if($_SESSION['pagetodisplay'] == 'leaderboard') {echo "active";} ?>" href="ctfpage.php?page=leaderboard">Leaderboard</a></li>
           <li><a class="nav-link scrollto <?php if($_SESSION['pagetodisplay'] == 'challenges') {echo "active";} ?>"" href="/ctfpage.php?page=challenges">Challenges</a></li>
@@ -64,7 +64,7 @@
 
 
   <main id="main">
-    
+
     <section id="login" class="login" >
     <div class="section-title">
         <h2>Add and Update Challenges: </h2>
@@ -72,7 +72,7 @@
     <div class="container" data-aos="fade-up">
     <div class="row" data-aos="fade-up" data-aos-delay="100" >
       <div class="col-lg-6 center" >
-        <form class="input-forms" action="./addchallenge.php" method="post">
+        <form class="input-forms" action="/admin/addchallenge.php" method="post">
         <div class="section-title">
           <h3><span>Add New Challenge:</span></h3>
         </div>
@@ -109,7 +109,7 @@
         </form>
       </div>
       <div class="col-lg-6 center" >
-        <form class="input-forms" action="./updatechallenge.php" method="post">
+        <form class="input-forms" action="/admin/updatechallenge.php" method="post">
         <div class="section-title">
           <h3><span>Edit Challenge:</span></h3>
         </div>
@@ -152,7 +152,7 @@
       </div>
       <br>  
       <div class="col-lg-6 center" >
-        <form class="input-forms" action="./releasechallenges.php" method="post">
+        <form class="input-forms" action="/admin/releasechallenges.php" method="post">
         <div class="section-title">
           <h3><span>Release Challenges:</span></h3>
         </div>
@@ -201,16 +201,15 @@
         ?>
         </tbody>
 
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.1/js/bootstrap.bundle.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/glightbox/3.2.0/js/glightbox.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/@srexi/purecounterjs@1.1.1/js/purecounter.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/10.2.0/swiper-bundle.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/noframework.waypoints.min.js"></script>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-  <script src="../assets/vendor/aos/aos.js"></script>
-  <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="../assets/vendor/glightbox/js/glightbox.min.js"></script>
-  <script src="../assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
-  <script src="../assets/vendor/php-email-form/validate.js"></script>
-  <script src="../assets/vendor/purecounter/purecounter.js"></script>
-  <script src="../assets/vendor/swiper/swiper-bundle.min.js"></script>
-  <script src="../assets/vendor/waypoints/noframework.waypoints.js"></script>
-
-  <script src="../assets/js/main.js"></script>
+  <script src="/assets/js/main.js"></script>
 </body>
 </html>

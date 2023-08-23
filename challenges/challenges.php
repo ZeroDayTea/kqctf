@@ -7,13 +7,13 @@
 
   if(!isset($team) || empty($team))
   {
-    header("location:ctfpage.php?page=team");
+    header("location:/ctfpage.php?page=team");
   }
 ?>
 
 
 <div class='section-title'>
-        <h2>Challenges</h2>
+<h2>Challenges</h2>
 </div>
 <div class='row' style='justify-content: center;margin: 0;margin-bottom: 50px;display: flex;'>
   <div class='col-3' id='sidebox'>
@@ -76,12 +76,12 @@
       var checked = [solved, crypto, forensics, pwn, rev, web];
       var checkedJSON = JSON.stringify( checked );
 
-      $.post("getchallenges.php", { checkedJSON : checkedJSON }, function(response){
+      $.post("/challenges/getchallenges.php", { checkedJSON : checkedJSON }, function(response){
         var result = response;
         document.getElementById("challengesDisplay").innerHTML = response;
       });
 
-      $.post("getchallengecounts.php", { }, function(response){
+      $.post("/challenges/getchallengecounts.php", { }, function(response){
         var result = response;
         var resultArray = JSON.parse(result);
         document.getElementById("display-solvecount").innerHTML = resultArray[0];
@@ -93,7 +93,7 @@
 
       });
     }
-    
+
     document.getElementById('checkbox-solved').addEventListener('change', getChallenges);
     document.getElementById('checkbox-crypto').addEventListener('change', getChallenges);
     document.getElementById('checkbox-forensics').addEventListener('change', getChallenges);
@@ -108,10 +108,10 @@
       var element = $(event.target);
       var flagguess = element.closest("div.chal-des").find("input[name='flaginput']").val();
       var challengeguess = element.closest("div.chal-des").closest("div.challengeBox").children('.row').children('.col-6').children('.chal-title').attr('name');
-      
+
       var info = [challengeguess, flagguess];
       var infoJSON = JSON.stringify( info );
-      $.post("checkflag.php", { infoJSON : infoJSON }, function(response){
+      $.post("/challenges/checkflag.php", { infoJSON : infoJSON }, function(response){
         var result = response;
         if(result == "Correct!")
         {

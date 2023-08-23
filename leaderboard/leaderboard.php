@@ -19,12 +19,10 @@
 </div>
 <script>
   document.getElementById('leaderboardselect').addEventListener('change', function() {
-    console.log('You selected: ', this.value);
     var selectedLeaderboard = this.value;
 
-    $.post("leaderboardgetteams.php", { selectedLeaderboard : selectedLeaderboard }, function(response){
+    $.post("/leaderboard/leaderboardgetteams.php", { selectedLeaderboard : selectedLeaderboard }, function(response){
       var result = response;
-      console.log(response);
       document.getElementById("sc-teams").innerHTML = response;
     });
 });

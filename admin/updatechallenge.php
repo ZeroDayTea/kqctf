@@ -1,8 +1,8 @@
 <?php
-    include("config.php");
-    include("session.php");
-    
-    if(($_SESSION['logintoken'] === "[addadminusername]") && isset($_POST['oldchallengename']) && isset($_POST['challengename']) && isset($_POST['challengedescription']) && isset($_POST['challengeauthor']) && isset($_POST['providedfile']) && isset($_POST['solutionflag']) && isset($_POST['category']) && isset($_POST['basescore']))
+    include("../config/config.php");
+    include("../user/session.php");
+
+    if(($_SESSION['logintoken'] === $configjson['adminusername']) && isset($_POST['oldchallengename']) && isset($_POST['challengename']) && isset($_POST['challengedescription']) && isset($_POST['challengeauthor']) && isset($_POST['providedfile']) && isset($_POST['solutionflag']) && isset($_POST['category']) && isset($_POST['basescore']))
     {
         $oldchallengename = $_POST['oldchallengename'];
         $challengename = $_POST['challengename'];
@@ -18,11 +18,11 @@
         $insertquery = "UPDATE challenges SET challengename='$challengename', challengedescription='$challengedescription', challengeauthor='$challengeauthor', providedfile='$providedfile', solutionflag='$solutionflaghash', category='$category', basescore='$basescore' WHERE challengename='$oldchallengename';";
         if (!mysqli_query($conn, $insertquery)) 
         {
-            header("location:adminpanel.php?message=errorupdate");
+            header("location:/admin/adminpanel.php?message=errorupdate");
         } 
         else 
         {
-            header("location:adminpanel.php?message=successupdate");
+            header("location:/admin/adminpanel.php?message=successupdate");
         }
     }
 ?>

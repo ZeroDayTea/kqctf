@@ -1,6 +1,6 @@
 <?php
-    include("config.php");
-    include("session.php");
+    include("../config/config.php");
+    include("../user/session.php");
 
     $leaderboard = isset($_POST['selectedLeaderboard'])?$_POST['selectedLeaderboard']:'';
 
@@ -36,5 +36,5 @@
 
         echo $leaderboardHTML;
     }
-    
+
 ?>
