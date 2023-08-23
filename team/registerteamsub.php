@@ -4,10 +4,10 @@
 
     if(isset($_POST['teamname']) && isset($_POST['teampassword']) && isset($_POST['teamretypepassword']))
     {
-        $teamname = mysql_real_escape_string($_POST['teamname']);
+        $teamname = mysqli_real_escape_string($_POST['teamname']);
         $teampassword = $_POST['teampassword'];
         $teamretypepassword = $_POST['teamretypepassword'];
-        $leaderboard = mysql_real_escape_string($_POST['teamleaderboard']);
+        $leaderboard = mysqli_real_escape_string($_POST['teamleaderboard']);
 
         $username = $_SESSION['logintoken'];
         if($teampassword !== $teamretypepassword)

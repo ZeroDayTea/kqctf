@@ -3,8 +3,8 @@
 
     if(isset($_POST['username']) && isset($_POST['password']) && isset($_POST['retypepassword']))
     {
-        $username = mysql_real_escape_string($_POST['username']);
-        $email = mysql_real_escape_string($_POST['email']);
+        $username = mysqli_real_escape_string($_POST['username']);
+        $email = mysqli_real_escape_string($_POST['email']);
         $password = $_POST['password'];
         $retypepassword = $_POST['retypepassword'];
         $username = str_replace("::::", "", $username);
