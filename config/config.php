@@ -23,6 +23,7 @@
 
     $_SESSION["ctfname"] = $configjson["ctfname"];
     $_SESSION["discordlink"] = $configjson["discordlink"];
+    $_SESSION["flagformat"] = $configjson["flagformat"];
 
     function CTFCCCFormula($pts,$cnt) {
         $base = $pts * 0.2;
@@ -38,7 +39,7 @@
             $team = $getteamsrow['solvedbyteam'];
             $getsolvedchalls = "SELECT DISTINCT challengename FROM solvedchallenges WHERE solvedbyteam='$team';";
             $getsolvedchallsresult = mysqli_query($connection, $getsolvedchalls);
-            
+
             if(mysqli_num_rows($getsolvedchallsresult) > 0)
             {
                 $totalpoints = 0;

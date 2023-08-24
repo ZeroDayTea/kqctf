@@ -82,6 +82,8 @@
 
         $pointsvalue = CTFCCCFormula($challengescore, $solves);
 
+	$flagformat = $_SESSION["flagformat"];
+
         $challengesHTML .= "
         <div class='challengeBox' id='challengeBox'>
             <div class='row'>
@@ -98,7 +100,7 @@
             <div class='chal-des'>
                 $challengedescription
                 <div class='input-group mb-3 chal-submit'>
-                <input autocomplete='off' autocorrect='off' type='text' class='form-control' placeholder='kqctf{flag}' aria-label='Flag' aria-describedby='flag-btn-' style='background: #FAFAFA' name='flaginput' id='flaginput'>
+                <input autocomplete='off' autocorrect='off' type='text' class='form-control' placeholder='$flagformat' aria-label='Flag' aria-describedby='flag-btn-' style='background: #FAFAFA' name='flaginput' id='flaginput'>
                 <div class='input-group-append''>
                     <button class='btn btn-outline-secondary' type='button' name='checkflagbtn' onClick='checkFlag(event);'>Submit</button>
                 </div>
@@ -116,9 +118,7 @@
             }
 
             $challengesHTML .= "
-            
 
-            
             </div>
         </div>
         ";

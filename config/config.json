@@ -1,9 +1,10 @@
 {
-    "db_username": "",
-    "db_password": "",
-    "db_databasename": "",
-    "ctfname": "",
+    "db_username": "squ1rrel",
+    "db_password": "PQjEfq9e7ZeKfX5t2cuN",
+    "db_databasename": "kqctf",
+    "ctfname": "squ1rrel",
     "discordlink": "",
-    "ctfmessage": "",
-    "adminusername": ""
+    "ctfmessage": "Register above, information below!",
+    "adminusername": "squ1rrel",
+    "flagformat": "squ1rrel{}"
 }
