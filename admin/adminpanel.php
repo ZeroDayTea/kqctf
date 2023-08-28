@@ -56,8 +56,8 @@
 
       <nav id="navbar" class="navbar">
         <ul>
-          <li><a class="nav-link scrollto <?php if($_SESSION['pagetodisplay'] == 'home') {echo "active";} ?>" href="../ctfpage.php?page=home">Home</a></li>
-          <li><a class="nav-link scrollto <?php if($_SESSION['pagetodisplay'] == 'leaderboard') {echo "active";} ?>" href="ctfpage.php?page=leaderboard">Leaderboard</a></li>
+          <li><a class="nav-link scrollto <?php if($_SESSION['pagetodisplay'] == 'home') {echo "active";} ?>" href="/ctfpage.php?page=home">Home</a></li>
+          <li><a class="nav-link scrollto <?php if($_SESSION['pagetodisplay'] == 'leaderboard') {echo "active";} ?>" href="/ctfpage.php?page=leaderboard">Leaderboard</a></li>
           <li><a class="nav-link scrollto <?php if($_SESSION['pagetodisplay'] == 'challenges') {echo "active";} ?>"" href="/ctfpage.php?page=challenges">Challenges</a></li>
           <li><a class="nav-link scrollto <?php if($_SESSION['pagetodisplay'] == 'team') {echo "active";} ?>" href="/ctfpage.php?page=team">Team</a></li>
           <li><a class="nav-link scrollto" href="/logout.php">Logout</a></li>
@@ -156,6 +156,10 @@
         </form>
       </div>
       <br>
+
+
+      <?php if(isset($_GET['message']) && $_GET['message'] == 'incompleteData') {echo '<br><h5 style="color:red; text-align:center"> Incomplete Data passed </h5>';} ?>
+
       <div class="col-lg-6 center" >
         <form class="input-forms" action="/admin/releasechallenges" method="post">
         <div class="section-title">

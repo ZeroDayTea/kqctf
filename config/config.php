@@ -24,6 +24,7 @@
     $_SESSION["ctfname"] = $configjson["ctfname"];
     $_SESSION["ctfmessage"] = $configjson["ctfmessage"];
     $_SESSION["discordlink"] = $configjson["discordlink"];
+    $_SESSION["flagformat"] = $configjson["flagformat"];
 
     function CTFCCCFormula($pts,$cnt) {
         $base = $pts * 0.2;
