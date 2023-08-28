@@ -2,25 +2,29 @@
     include("../user/session.php");
     include("../config/config.php");
 
-if(($_SESSION['logintoken'] === $configjson['adminusername']) && isset($_POST['releasechallenges']))
-    {
-        $releasechallenges = $_POST['releasechallenges'];
+    function redirectWithMessage($message) {
+        header("location:/admin/adminpanel.php?message=$message");
+        exit();
+    }
 
-        if($releasechallenges === 'yes')
-        {
-            $releasequery = "UPDATE challenges SET released=true;";
-            if (!mysqli_query($conn, $releasequery))
-            {
-                header("location:/admin/adminpanel.php?message=errorrelease");
-            }
-            else
-            {
-                header("location:/admin/adminpanel.php?message=successrelease");
-            }
+    if ($_SESSION['logintoken'] !== $configjson['adminusername']) {
+        header("location:/user/logout");
+        exit();
+    }
+
+    if (!isset($_POST['releasechallenges'])) {
+        redirectWithMessage("incompleteData");
+    }
+
+    $releasechallenges = $_POST['releasechallenges'];
+    if($releasechallenges === 'yes') {
+        $stmt = $conn->prepare("UPDATE challenges SET released=true;");
+        if ($stmt->execute()) {
+            redirectWithMessage("successrelease");
+        } else {
+            redirectWithMessage("errorrelease");
         }
-        else
-        {
-            header("location:/admin/adminpanel.php?message=norelease");
-        }
+    } else {
+        redirectWithMessage("norelease");
     }
 ?>

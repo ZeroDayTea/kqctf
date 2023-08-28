@@ -1,17 +1,3 @@
-<?php
-  $username = $_SESSION['logintoken'];
-  $query = "SELECT * FROM users WHERE username='$username';";
-  $result = mysqli_query($conn, $query);
-  $userrow = mysqli_fetch_array($result, MYSQLI_ASSOC);
-  $team = $userrow['team'];
-
-  if(!isset($team) || empty($team))
-  {
-    header("location:/ctfpage.php?page=team");
-  }
-?>
-
-
 <div class='section-title'>
 <h2>Challenges</h2>
 </div>
@@ -35,9 +21,9 @@
         </label>
       </div>
       <div class='form-check'>
-        <input class='form-check-input' type='checkbox' value='' id='checkbox-forensics'>
-        <label class='form-check-label' for='checkbox-forensics' id='display-forensics'>
-          forensics <a id='forensics-solve'>0/0</a> solved
+        <input class='form-check-input' type='checkbox' value='' id='checkbox-misc'>
+        <label class='form-check-label' for='checkbox-misc' id='display-misc'>
+          misc <a id='misc-solve'>0/0</a> solved
         </label>
       </div>
       <div class='form-check'>
@@ -68,35 +54,35 @@
     function getChallenges() {
       var solved = document.getElementById('checkbox-solved').checked;
       var crypto = document.getElementById('checkbox-crypto').checked;
-      var forensics = document.getElementById('checkbox-forensics').checked;
+      var misc = document.getElementById('checkbox-misc').checked;
       var pwn = document.getElementById('checkbox-pwn').checked;
       var rev = document.getElementById('checkbox-rev').checked;
       var web = document.getElementById('checkbox-web').checked;
 
-      var checked = [solved, crypto, forensics, pwn, rev, web];
+      var checked = [solved, crypto, misc, pwn, rev, web];
       var checkedJSON = JSON.stringify( checked );
 
-      $.post("/challenges/getchallenges.php", { checkedJSON : checkedJSON }, function(response){
+      $.post("/challenges/getchallenges", { checkedJSON : checkedJSON }, function(response){
         var result = response;
         document.getElementById("challengesDisplay").innerHTML = response;
       });
 
-      $.post("/challenges/getchallengecounts.php", { }, function(response){
+      $.post("/challenges/getchallengecounts", { }, function(response){
         var result = response;
         var resultArray = JSON.parse(result);
-        document.getElementById("display-solvecount").innerHTML = resultArray[0];
-        document.getElementById("display-crypto").innerHTML = resultArray[1];
-        document.getElementById("display-forensics").innerHTML = resultArray[2];
-        document.getElementById("display-pwn").innerHTML = resultArray[3];
-        document.getElementById("display-rev").innerHTML = resultArray[4];
-        document.getElementById("display-web").innerHTML = resultArray[5];
+        document.getElementById("display-solvecount").innerHTML = resultArray[5];
+        document.getElementById("display-crypto").innerHTML = resultArray[0];
+        document.getElementById("display-misc").innerHTML = resultArray[1];
+        document.getElementById("display-pwn").innerHTML = resultArray[2];
+        document.getElementById("display-rev").innerHTML = resultArray[3];
+        document.getElementById("display-web").innerHTML = resultArray[4];
 
       });
     }
 
     document.getElementById('checkbox-solved').addEventListener('change', getChallenges);
     document.getElementById('checkbox-crypto').addEventListener('change', getChallenges);
-    document.getElementById('checkbox-forensics').addEventListener('change', getChallenges);
+    document.getElementById('checkbox-misc').addEventListener('change', getChallenges);
     document.getElementById('checkbox-pwn').addEventListener('change', getChallenges);
     document.getElementById('checkbox-rev').addEventListener('change', getChallenges);
     document.getElementById('checkbox-web').addEventListener('change', getChallenges);
@@ -111,7 +97,7 @@
 
       var info = [challengeguess, flagguess];
       var infoJSON = JSON.stringify( info );
-      $.post("/challenges/checkflag.php", { infoJSON : infoJSON }, function(response){
+      $.post("/challenges/checkflag", { infoJSON : infoJSON }, function(response){
         var result = response;
         if(result == "Correct!")
         {
@@ -124,7 +110,7 @@
           alertify.message("Your team already solved this challenge!");
           element.closest("div.chal-des").find("input[name='flaginput']").val('');
         }
-        else if(result == "nope!")
+        else if(result == "Incorrect guess!")
         {
           alertify.error("That flag is incorrect");
         }

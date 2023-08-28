@@ -6,30 +6,31 @@
 
     if(isset($_POST["username"]) && isset($_POST["password"]))
     {
-      $username = mysqli_real_escape_string($conn, $_POST['username']);
+      $username = $_POST['username'];
       $password = $_POST['password'];
 
-      $query = "SELECT username, password FROM users WHERE username='$username';";
-      $result = mysqli_query($conn, $query);
-      $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+      $userquery = $conn->prepare("SELECT username, password FROM users WHERE username=?;");
+      $userquery->bind_param("s", $username);
+      $userquery->execute();
+      $userresult = $userquery->get_result();
+      $userrow = $userresult->fetch_assoc();
+      $usercount = $userresult->num_rows;
+      $userquery->close();
 
-      $count = mysqli_num_rows($result);
-
-        if ($count == 1) 
+        if ($usercount == 1)
         {
-          if(password_verify($password, $row['password']))
+          if(password_verify($password, $userrow['password']))
           {
             $_SESSION['logintoken'] = $username;
 
-            header("location:/ctfpage.php?page=home");
-            exit();
+            header("location:/ctfpage?page=home");
           }
-          else 
+          else
           {
             $errormsg = '<h6 class="text-center" style="color:red">Invalid Login</h6>';
           }
-        } 
-        else 
+        }
+        else
         {
             $errormsg = '<h6 class="text-center" style="color:red">Invalid Login</h6>';
         }
@@ -51,7 +52,7 @@
   <link href="/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
 
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Roboto:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
-  
+
   <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.1/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css" rel="stylesheet">
@@ -72,7 +73,6 @@
 
       <nav id="navbar" class="navbar">
         <ul>
-        <a href="<?php echo $_SESSION['discordlink'] ?>"><img src="/assets/img/discord.png" style="width:50px; padding-right:25%"></a>
           <li><a class="nav-link scrollto " href="/">Home</a></li>
           <li><a class="nav-link scrollto " href="register.php">Register</a></li>
           <li><a class="nav-link active" href="login.php">Login</a></li>

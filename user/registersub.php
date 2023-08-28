@@ -1,60 +1,77 @@
 <?php
     include("../config/config.php");
 
-    if(isset($_POST['username']) && isset($_POST['password']) && isset($_POST['retypepassword']))
+if(isset($_POST['username']) && isset($_POST['password']) && isset($_POST['retypepassword']) && isset($_POST['competingwith']))
     {
         $username = mysqli_real_escape_string($conn, $_POST['username']);
         $email = mysqli_real_escape_string($conn, $_POST['email']);
         $password = $_POST['password'];
         $retypepassword = $_POST['retypepassword'];
-        $username = str_replace("::::", "", $username);
-        if($password !== $retypepassword)
+        $competingwith = $_POST['competingwith'];
+
+        if($password != $retypepassword)
         {
-            header("location:register.php?error=passwordsdonotmatch");
+            header("location:/user/register?error=passwordsdonotmatch");
         }
 
         $passwordhash = password_hash($password, PASSWORD_DEFAULT);
 
-        $checkquery = "SELECT * FROM users WHERE username='$username';";
-        $result = mysqli_query($conn, $checkquery);
-	    $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
-        $count = mysqli_num_rows($result);
+        $checkusername = $conn->prepare("SELECT * FROM users WHERE username=?;");
+        $checkusername->bind_param("s", $username);
+        $checkusername->execute();
+        $row = $checkusername->get_result()->fetch_assoc();
+        $usernamecount = $checkusername->affected_rows;
+        $checkusername->close();
 
-        if ($count == 0)
+        if ($usernamecount == 0)
         {
-            $checkquery2 = "SELECT * FROM users WHERE email='$email';";
-            $result2 = mysqli_query($conn, $checkquery2);
-            $row2 = mysqli_fetch_array($result2, MYSQLI_ASSOC);
-            $count2 = mysqli_num_rows($result2);
+            $checkemail = $conn->prepare("SELECT * FROM users WHERE email=?;");
+            $checkemail->bind_param("s", $email);
+            $checkemail->execute();
+            $emailrow = $checkemail->get_result()->fetch_assoc();
+            $emailcount = $checkemail->affected_rows;
+            $checkemail->close();
 
-            if ($count2 == 0)
+            if ($emailcount == 0)
             {
-                $query = "INSERT INTO users (username, password, email, team) VALUES ('$username', '$passwordhash', '$email', NULL);";
-                $query_run = mysqli_query($conn, $query);
+                $teamid = NULL;
 
-                if($query_run)
+                // if competing solo then create solo team
+                if($competingwith === "solo")
                 {
-                    header("location:login.php");
+                    $insertteam = $conn->prepare("INSERT INTO teams (teamname, password, points, mostrecentsoltime) VALUES (?, ?, 0, NULL);");
+                    $insertteam->bind_param("ss", $username, $passwordhash);
+                    $insertteam->execute();
+                    $teamid = $conn->insert_id;
+                    $insertteam->close();
+                }
+
+                $insertuser = $conn->prepare("INSERT INTO users (username, password, email, team) VALUES (?, ?, ?, ?);");
+                $insertuser->bind_param("sssi", $username, $passwordhash, $email, $teamid);
+
+                if($insertuser->execute())
+                {
+                    $insertuser->close();
+                    header("location:/user/login");
                 }
                 else
                 {
-                    header("location:register.php?error=adminerror");
+                    $insertuser->close();
+                    header("location:/user/register?error=adminerror");
                 }
             }
             else
             {
-                header("location:register.php?error=emailtaken");
+                header("location:/user/register?error=emailtaken");
             }
         }
         else
         {
-            header("location:register.php?error=usernametaken");
+            header("location:/user/register?error=usernametaken");
         }
-
-        
     }
     else
     {
-        header("location:register.php?error=adminerror");
+        header("location:/user/register");
     }
 ?>

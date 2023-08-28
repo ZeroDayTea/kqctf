@@ -1,93 +1,52 @@
 <?php
-    include("../user/session.php");
-    include("../config/config.php");
+include("../user/session.php");
+include("../config/config.php");
 
-    $challengequery = "SELECT * FROM challenges WHERE released=true;";
-    $challengeresult = mysqli_query($conn, $challengequery);
-    $count = 0;
-    $cryptocount = 0;
-    $forensicscount = 0;
-    $pwncount = 0;
-    $revcount = 0;
-    $webcount = 0;
+// Function to get challenge counts by category
+function getChallengeCounts($conn, $condition = "", $team = null) {
+    $categories = ['crypto', 'misc', 'pwn', 'rev', 'web'];
+    $counts = [];
 
-    $username = $_SESSION['logintoken'];
-    $teamquery = "SELECT team FROM users WHERE username='$username';";
-    $teamresult = mysqli_query($conn, $teamquery);
-    $teamrow = mysqli_fetch_array($teamresult, MYSQLI_ASSOC);
-    $team = $teamrow['team'];
+    foreach ($categories as $category) {
+        $stmt = $conn->prepare("SELECT COUNT(*) as count FROM challenges WHERE released=true AND category=? $condition");
 
-    while($challengerow = mysqli_fetch_array($challengeresult, MYSQLI_ASSOC))
-    {
-      $count += 1;
-      if($challengerow["category"] == 'crypto')
-      {
-        $cryptocount += 1;
-      }
-      else if($challengerow["category"] == 'forensics')
-      {
-        $forensicscount += 1;
-      }
-      else if($challengerow["category"] == 'pwn')
-      {
-        $pwncount += 1;
-      }
-      else if($challengerow["category"] == 'rev')
-      {
-        $revcount += 1;
-      }
-      else if($challengerow["category"] == 'web')
-      {
-        $webcount += 1;
-      }
+        if ($team) {
+            $stmt->bind_param('si', $category, $team);  // 's' for string (category), 'i' for integer (team)
+        } else {
+            $stmt->bind_param('s', $category);
+        }
+
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_assoc();
+        $counts[$category] = $result['count'];
+        $stmt->close();
     }
 
-    $solvedquery = "SELECT * FROM solvedchallenges WHERE solvedbyteam=$team;";
-    $solvedresult = mysqli_query($conn, $solvedquery);
-    $solvedcount = 0;
-    $solvedcryptocount = 0;
-    $solvedforensicscount = 0;
-    $solvedpwncount = 0;
-    $solvedrevcount = 0;
-    $solvedwebcount = 0;
+    return $counts;
+}
 
-    while($solvedrow = mysqli_fetch_array($solvedresult, MYSQLI_ASSOC))
-    {
-      $challname = $solvedrow['challengename'];
-      $solvedchallengequery = "SELECT * FROM challenges WHERE released=true AND challengename='$challname';";
-      $solvedchallengeresult = mysqli_query($conn, $challengequery);
-      $solvedchallengerow = mysqli_fetch_array($solvedchallengeresult, MYSQLI_ASSOC);
+// Get total challenges by category
+$totalChallenges = getChallengeCounts($conn);
 
-      $solvedcount += 1;
-      if($solvedchallengerow["category"] === 'crypto')
-      {
-        $solvedcryptocount += 1;
-      }
-      else if($solvedchallengerow["category"] === 'forensics')
-      {
-        $solvedforensicscount += 1;
-      }
-      else if($solvedchallengerow["category"] === 'pwn')
-      {
-        $solvedpwncount += 1;
-      }
-      else if($solvedchallengerow["category"] === 'rev')
-      {
-        $solvedrevcount += 1;
-      }
-      else if($solvedchallengerow["category"] === 'web')
-      {
-        $solvedwebcount += 1;
-      }
-    }
+// Get user's team
+$stmt = $conn->prepare("SELECT team FROM users WHERE username=?");
+$stmt->bind_param("s", $_SESSION['logintoken']);
+$stmt->execute();
+$team = $stmt->get_result()->fetch_assoc()['team'];
+$stmt->close();
 
-    $total = "Include Solved " . "($solvedcount" . "/" . "$count solved)";
-    $crypto = "crypto ($solvedcryptocount" . "/" . "$cryptocount solved)";
-    $forensics = "forensics ($solvedforensicscount" . "/" . "$forensicscount solved)";
-    $pwn = "pwn ($solvedpwncount" . "/" . "$pwncount solved)";
-    $rev = "rev ($solvedrevcount" . "/" . "$revcount solved)";
-    $web = "web ($solvedwebcount" . "/" . "$webcount solved)";
+// Get solved challenges by category for the team
+$solvedChallenges = getChallengeCounts($conn, "AND EXISTS (SELECT 1 FROM solvedchallenges WHERE challenges.challengename = solvedchallenges.challengename AND solvedbyteam=?)", $team);
 
-    $solves = [$total, $crypto, $forensics, $pwn, $rev, $web];
-    print json_encode($solves);
+// 'Include Solved' refers to the total
+$solvedChallenges['Include Solved'] = array_sum($solvedChallenges);
+$totalChallenges['Include Solved'] = array_sum($totalChallenges);
+
+// Format the output
+$solves = [];
+foreach ($totalChallenges as $category => $count) {
+    $solves[] = "$category (" . $solvedChallenges[$category] . "/$count solved)";
+}
+
+echo json_encode($solves);
 ?>

@@ -8,8 +8,14 @@
   }
   else
   {
-    header("Location:logout.php");
+    header("Location:/user/logout");
   }
+
+  // used in table generation below
+  $stmt = $conn->prepare("SELECT challengename FROM challenges WHERE released = 'false'");
+  $stmt->execute();
+  $result = $stmt->get_result();
+  $counter = 1;
 ?>
 
 <!DOCTYPE html>
@@ -50,7 +56,6 @@
 
       <nav id="navbar" class="navbar">
         <ul>
-      <a href="<?php echo $_SESSION['discordlink'] ?>"><img src="/assets/img/discord.png" style="width:50px; padding-right:25%"></a>
           <li><a class="nav-link scrollto <?php if($_SESSION['pagetodisplay'] == 'home') {echo "active";} ?>" href="../ctfpage.php?page=home">Home</a></li>
           <li><a class="nav-link scrollto <?php if($_SESSION['pagetodisplay'] == 'leaderboard') {echo "active";} ?>" href="ctfpage.php?page=leaderboard">Leaderboard</a></li>
           <li><a class="nav-link scrollto <?php if($_SESSION['pagetodisplay'] == 'challenges') {echo "active";} ?>"" href="/ctfpage.php?page=challenges">Challenges</a></li>
@@ -67,7 +72,7 @@
 
     <section id="login" class="login" >
     <div class="section-title">
-        <h2>Add and Update Challenges: </h2>
+        <h2>Add and Update Challenges </h2>
     </div>
     <div class="container" data-aos="fade-up">
     <div class="row" data-aos="fade-up" data-aos-delay="100" >
@@ -96,7 +101,7 @@
           <div class="form-group">
             <input type="text" class="form-control" name="category" placeholder="Category" required>
             <div style="text-align:center">
-            <p>crypto, forensics, pwn, rev, or web (type exactly as seen)</p>
+            <p>crypto, misc, pwn, rev, or web (type exactly as seen)</p>
             </div>
           </div>
           <div class="form-group">
@@ -109,7 +114,7 @@
         </form>
       </div>
       <div class="col-lg-6 center" >
-        <form class="input-forms" action="/admin/updatechallenge.php" method="post">
+        <form class="input-forms" action="/admin/updatechallenge" method="post">
         <div class="section-title">
           <h3><span>Edit Challenge:</span></h3>
         </div>
@@ -138,7 +143,7 @@
           <div class="form-group">
             <input type="text" class="form-control" name="category" placeholder="Category" required>
             <div style="text-align:center">
-            <p>crypto, forensics, pwn, rev, or web (type exactly as seen)</p>
+            <p>crypto, misc, pwn, rev, or web (type exactly as seen)</p>
             </div>
           </div>
           <div class="form-group">
@@ -150,9 +155,9 @@
           <?php if(isset($_GET['message']) && $_GET['message'] == 'successupdate') {echo '<br><h5 style="color:green; text-align:center"> Updated challenge successfully! </h5>';} ?>
         </form>
       </div>
-      <br>  
+      <br>
       <div class="col-lg-6 center" >
-        <form class="input-forms" action="/admin/releasechallenges.php" method="post">
+        <form class="input-forms" action="/admin/releasechallenges" method="post">
         <div class="section-title">
           <h3><span>Release Challenges:</span></h3>
         </div>
@@ -172,7 +177,7 @@
 </section>
 
       <div class="section-title">
-        <h2>Unreleased Challenges: </h2>
+        <h2>Unreleased Challenges </h2>
       </div>
         <div class="col-6 center" style="min-height: 230px;">
         <table class="table scoreboard" style="border: none; background-color: white;">
@@ -183,23 +188,21 @@
           </tr>
         </thead>
         <tbody style="text-align: center;" id="sc-teams">
-        <?php
-          $unreleasedquery = "SELECT * FROM challenges WHERE released='false';";
-          $unreleasedresult = mysqli_query($conn, $unreleasedquery);
-          $counter = 1;
-          while($unreleasedrow = mysqli_fetch_array($unreleasedresult, MYSQLI_ASSOC))
-          {
-            $challname = $unreleasedrow['challengename'];
-            echo "
-              <tr>
-              <th style=\"font-weight:normal;\">$counter</th>
-              <th style=\"font-weight:normal;\">$challname</th>
-              </tr>
-              ";
-            $counter += 1;
-          }
-        ?>
+        <?php while ($row = $result->fetch_assoc()): ?>
+            <tr>
+                <td class="normal-font"><?= $counter ?></td>
+                <td class="normal-font"><?= htmlspecialchars($row['challengename']) ?></td>
+            </tr>
+            <?php $counter++; ?>
+        <?php endwhile; ?>
         </tbody>
+        </table>
+
+        <style>
+            .normal-font {
+                font-weight: normal;
+            }
+        </style>
 
  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.1/js/bootstrap.bundle.min.js"></script>

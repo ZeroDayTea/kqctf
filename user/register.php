@@ -37,10 +37,9 @@ include("../config/config.php");
 
       <nav id="navbar" class="navbar">
         <ul>
-          <a href="[adddiscordlink]"><img src="../assets/img/discord.png" style="width:50px; padding-right:25%"></a>
           <li><a class="nav-link scrollto " href="/">Home</a></li>
-          <li><a class="nav-link scrollto active" href="./register.php">Register</a></li>
-          <li><a class="nav-link" href="./login.php">Login</a></li>
+          <li><a class="nav-link scrollto active" href="/user/register">Register</a></li>
+          <li><a class="nav-link" href="/user/login">Login</a></li>
         </ul>
         <i class="bi bi-list mobile-nav-toggle"></i>
       </nav>
@@ -56,7 +55,7 @@ include("../config/config.php");
         </div>
         <div class="row" data-aos="fade-up" data-aos-delay="100" >
           <div class="col-lg-6 center" >
-            <form class="input-forms" action="./registersub.php" method="post">
+            <form class="input-forms" action="/user/registersub" method="post">
               <div class="row">
                 <div class="col form-group">
                   <input type="text" class="form-control" name="username" placeholder="Username" required>
@@ -70,6 +69,15 @@ include("../config/config.php");
               </div>
               <div class="form-group">
                 <input type="password" class="form-control" name="retypepassword" placeholder="Retype Password" required>
+              </div>
+              <div class="form-group" style="text-align:center">
+                <label for="competingwith">Who are you CTFing with?</label>
+                <br>
+                <br>
+                <select name="competingwith" id="competingwith" class="form-control">
+                  <option value="solo">I'm flying solo</option>
+                  <option value="team">I'm with friends</option>
+                </select>
               </div>
               <br>
               <div class="text-center"><button type="submit" class="btn btn-primary">Register</button></div>

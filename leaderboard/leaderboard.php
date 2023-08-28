@@ -3,7 +3,7 @@
   <h3>Main Leaderboard: </h3>
   </div>
   <div class="row" style="justify-content: center;margin: 0;margin-bottom: 50px;display: flex;">
-<div class="col-3">
+<!--<div class="col-3">
   <div class="challengeBox">
     <div class="form-group">
       <label for="filtereligibility">Division</label>
@@ -16,12 +16,12 @@
       <br>
     </div>
   </div>
-</div>
+</div>-->
 <script>
   document.getElementById('leaderboardselect').addEventListener('change', function() {
     var selectedLeaderboard = this.value;
 
-    $.post("/leaderboard/leaderboardgetteams.php", { selectedLeaderboard : selectedLeaderboard }, function(response){
+    $.post("/leaderboard/leaderboardgetteams", { selectedLeaderboard : selectedLeaderboard }, function(response){
       var result = response;
       document.getElementById("sc-teams").innerHTML = response;
     });
@@ -39,16 +39,26 @@
     <tbody style="text-align: center;" id="sc-teams">
 
     <?php
-    $leaderboardquery = "SELECT * FROM teams ORDER BY points DESC;";
-    $leaderboardresult = mysqli_query($conn, $leaderboardquery);
-    $counter = 1;
-    while($leaderboardrow = mysqli_fetch_array($leaderboardresult, MYSQLI_ASSOC))
-    {
-      $teamname = htmlspecialchars($leaderboardrow['teamname'], ENT_QUOTES, 'UTF-8');
-      $teampoints = $leaderboardrow["points"];
-      echo "<tr class=\"\" style=\"background-color:white\"><td>$counter</td><td><a class=\"ctflink\" id=\"teamname-$counter\">$teamname</a></td><td>$teampoints</td></tr>";
-      $counter = $counter + 1;
-    }
+      $leaderboardquery = $conn->prepare("SELECT * FROM teams ORDER BY points DESC;");
+      $leaderboardquery->execute();
+      $result = $leaderboardquery->get_result();
+      $counter = 1;
+
+      while($leaderboardrow = $result->fetch_assoc())
+      {
+        $teamname = htmlspecialchars($leaderboardrow['teamname'], ENT_QUOTES, 'UTF-8');
+        $teampoints = htmlspecialchars($leaderboardrow["points"], ENT_QUOTES, 'UTF-8');
+        echo <<<HTML
+            <tr class="" style="background-color:white">
+            <td>{$counter}</td>
+            <td><a class="ctflink" id="teamname-{$counter}" href="/ctfpage?page=team&team={$teamname}">{$teamname}</a></td>
+            <td>{$teampoints}</td>
+            </tr>
+            HTML;
+        $counter++;
+      }
+
+      $leaderboardquery->close();
     ?>
     </tbody>
   </table>

@@ -1,39 +1,57 @@
 <?php
-    include("config.php");
-    include("session.php");
+include("../config/config.php");
+include("../user/session.php");
 
-    if(isset($_POST['teamname']) && isset($_POST['teampassword']))
-    {
-        $teamname = $_POST['teamname'];
-        $teampassword = $_POST['teampassword'];
+if (isset($_POST['teamname'], $_POST['teampassword'])) {
+    $teamname = $_POST['teamname'];
+    $teampassword = $_POST['teampassword'];
 
-        $query = "SELECT * FROM teams WHERE teamname='$teamname';";
-        $result = mysqli_query($conn, $query);
-	    $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
-        $count = mysqli_num_rows($result);
-        if($count == 1)
-        {
-            if(password_verify($teampassword, $row["password"]))
-            {
-                $membercount = 1;
-                if($membercount >= 7)
-                {
-                    header("location:ctfpage.php?page=team&error=teamfull");
-                }
-                $teamname = $row['teamname'];
-                $username = $_SESSION['logintoken'];
-                $updatequery = "UPDATE users SET team='$teamname' WHERE username='$username';";
-                $update_query_run = mysqli_query($conn, $updatequery);
-                header("location:ctfpage.php?page=team");
+    // check if team exists and get its password
+    $stmt = $conn->prepare("SELECT teamid, password FROM teams WHERE teamname = ?");
+    $stmt->bind_param("s", $teamname);
+    $stmt->execute();
+    $stmt->store_result();
+
+    if ($stmt->num_rows === 1) {
+        $stmt->bind_result($team, $hashedPassword);
+        $stmt->fetch();
+
+        if (password_verify($teampassword, $hashedPassword)) {
+            // check team capacity
+            $stmt->close();
+            $stmt = $conn->prepare("SELECT COUNT(*) as memberCount FROM users WHERE team = ?");
+            $stmt->bind_param("s", $team);
+            $stmt->execute();
+            $stmt->bind_result($memberCount);
+            $stmt->fetch();
+
+            if ($memberCount >= $configjson['maxteamsize']) {
+                redirectToError('teamfull');
             }
-            else
-            {
-                header("location:ctfpage.php?page=team&error=incorrectjoin");
-            }
+
+            $stmt->close();
+
+            $username = $_SESSION['logintoken'];
+            // Update user's team
+            $stmt = $conn->prepare("UPDATE users SET team = ? WHERE username = ?");
+            $stmt->bind_param("ss", $team, $username);
+            $stmt->execute();
+            $stmt->close();
+
+            header("location:/ctfpage.php?page=team");
+            exit;
+        } else {
+            redirectToError('incorrectjoin');
         }
-        else
-        {
-            header("location:ctfpage.php?page=team&error=incorrectjoin");
-        }
+    } else {
+        redirectToError('incorrectjoin');
     }
+} else {
+    redirectToError('missingdetails');
+}
+
+function redirectToError($error) {
+    header("location:/ctfpage.php?page=team&error={$error}");
+    exit;
+}
 ?>

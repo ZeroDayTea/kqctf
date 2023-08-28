@@ -1,128 +1,116 @@
 <?php
-    include("../config/config.php");
-    include("../user/session.php");
+include("../config/config.php");
+include("../user/session.php");
 
-    $checkedJSON = isset($_POST['checkedJSON'])?$_POST['checkedJSON']:'';
-    $checkedArray = json_decode($_POST['checkedJSON']);
-    $categoryNameArray = ["", "crypto", "forensics", "pwn", "rev", "web"];
+// get all the challenges to display based on the categories that were checked and whether to show solved challenges
+function getChallenges($conn, $categories, $teamname, $includeSolved) {
+    $baseQuery = "
+        SELECT c.category, c.challengename, c.challengeauthor, c.challengedescription, c.basescore, c.providedfile
+        FROM challenges c
+        LEFT JOIN solvedchallenges s ON s.challengename = c.challengename AND s.solvedbyteam = ?
+        WHERE c.released = true
+    ";
 
-    $username = $_SESSION['logintoken'];
-    $teamquery = "SELECT team FROM users WHERE username='$username';";
-    $teamresult = mysqli_query($conn, $teamquery);
-    $teamrow = mysqli_fetch_array($teamresult, MYSQLI_ASSOC);
-    $teamname = $teamrow['team'];
-
-    $query = "SELECT challenges.category, challenges.challengename, challenges.challengeauthor, challenges.challengedescription, challenges.basescore, challenges.providedfile FROM challenges";
-    $where = "";
-    for($i = 1; $i < count($checkedArray); $i++)
-    {
-        if($checkedArray[$i])
-        {
-            if($where == "")
-            {
-                $where .= "category='" . $categoryNameArray[$i] . "'";
-            }
-            else
-            {
-                $where .= " OR category='" . $categoryNameArray[$i] . "'";
-            }
-        }
+    if (!$includeSolved) {
+        $baseQuery .= "AND s.solvedbyteam IS NULL ";
     }
 
-    $join = "";
+    if (empty($categories)) {
+        $query = $baseQuery . "ORDER BY c.solves DESC";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param('s', $teamname);
+    } else {
+        $in = implode(',', array_fill(0, count($categories), '?'));
+        $query = $baseQuery . "AND c.category IN ($in) ORDER BY c.solves DESC";
+        $stmt = $conn->prepare($query);
 
-    if(!$checkedArray[0])
-    {
-        $join = " LEFT JOIN solvedchallenges ON solvedchallenges.challengename=challenges.challengename AND solvedchallenges.solvedbyteam='$teamname'";
+        $types = str_repeat('s', count($categories) + 1); // The number of s characters should equal the number of parameters
+        $stmt->bind_param($types, ...array_merge([$teamname], $categories));
     }
 
-    if($join != "")
-    {
-        $query .= $join;
+    $stmt->execute();
+
+    return $stmt->get_result();
+}
+
+function getSolveCount($conn, $challengeName) {
+    $stmt = $conn->prepare("SELECT COUNT(*) FROM solvedchallenges WHERE challengename = ?");
+    $stmt->bind_param("s", $challengeName);
+    $stmt->execute();
+    $result = $stmt->get_result()->fetch_assoc();
+    return $result['COUNT(*)'];
+}
+
+// determine which categories were checked except first element which is 'Include Solved'
+$checkedJSON = $_POST['checkedJSON'] ?? '';
+$checkedArray = json_decode($checkedJSON, true);
+$categoryNameArray = ["crypto", "misc", "pwn", "rev", "web"];
+$selectedCategories = array();
+for($i = 1; $i < count($checkedArray); $i++) {
+    if($checkedArray[$i]) {
+        array_push($selectedCategories, $categoryNameArray[$i-1]);
     }
+}
 
-    if($where == "")
-    {
-        if($join != "")
-        {
-            $query .= "WHERE solvedchallenges.solvedbyteam IS NULL AND challenges.released=true ORDER BY challenges.solves DESC;";
-        }
-        else
-        {
-            $query .= " WHERE challenges.released=true ORDER BY challenges.solves DESC;";
-        }
-    }
-    else
-    {
-        if($join != "")
-        {
-            $query .= "WHERE solvedchallenges.solvedbyteam IS NULL AND challenges.released=true AND ($where) ORDER BY challenges.solves DESC;";
-        }
-        else
-        {
-            $query .= " WHERE " . $where . " AND challenges.released=true" . " ORDER BY challenges.solves DESC;";
-        } 
-    }
+// whether or not 'Include Solved' was checked
+$includeSolved = $checkedArray[0];
 
-    $challengesHTML = "";
-    $challengesresult = mysqli_query($conn, $query);
-    while($challengerow = mysqli_fetch_array($challengesresult, MYSQLI_ASSOC))
-    {
-        $challengecategory = $challengerow['category'];
-        $challengename = $challengerow['challengename'];
-        $challengeauthor = $challengerow['challengeauthor'];
-        $challengedescription = $challengerow['challengedescription'];
-        $challengescore = $challengerow['basescore'];
-        $challengefile = $challengerow['providedfile'];
+$username = $_SESSION['logintoken'];
+$teamStmt = $conn->prepare("SELECT team FROM users WHERE username=?;");
+$teamStmt->bind_param("s", $username);
+$teamStmt->execute();
+$teamResult = $teamStmt->get_result()->fetch_assoc();
+$teamid = $teamResult['team'];
 
-        $solvecountquery = "SELECT * FROM solvedchallenges WHERE challengename='$challengename';";
-        $solvecountresult = mysqli_query($conn, $solvecountquery);
+$challengesHTML = '';
+$challengesResult = getChallenges($conn, $selectedCategories, $teamid, $includeSolved);
 
-        $solves = mysqli_num_rows($solvecountresult);
+while($challengerow = $challengesResult->fetch_assoc()) {
+    $solves = getSolveCount($conn, $challengerow['challengename']);
+    $pointsvalue = CTFCCCFormula($challengerow['basescore'], $solves);
+    $challengename = htmlspecialchars($challengerow['challengename'], ENT_QUOTES, 'UTF-8');
+    $challengeauthor = htmlspecialchars($challengerow['challengeauthor'], ENT_QUOTES, 'UTF-8');
+    $challengedescription = htmlspecialchars($challengerow['challengedescription'], ENT_QUOTES, 'UTF-8');
+    $challengefile = htmlspecialchars($challengerow['providedfile'], ENT_QUOTES, 'UTF-8');
+    $flagformat = $configjson['flagformat'];
 
-        $pointsvalue = CTFCCCFormula($challengescore, $solves);
-
-        $challengesHTML .= "
-        <div class='challengeBox' id='challengeBox'>
-            <div class='row'>
+    $challengesHTML .= <<<HTML
+    <div class='challengeBox' id='challengeBox'>
+        <div class='row'>
             <div class='col-6'>
-                <!--<div class='chal-category'> $challengecategory <br></div>-->
-                <div class='chal-title' name='$challengename'> $challengename <br></div>
-                <div class='chal-author'> $challengeauthor </div>
+                    <div class='chal-title' name='{$challengename}'> {$challengename} <br></div>
+                    <div class='chal-author'> {$challengeauthor} </div>
                 </div>
                 <div class='col-6 chal-leftcard'>
-                <a href='ctfpage.php?page=challenges' target='_blank' class='chal-solves'> $solves solves /  $pointsvalue points</a>
+                    <a href='ctfpage.php?page=challenges' target='_blank' class='chal-solves'> {$solves} solves /  {$pointsvalue} points</a>
                 </div>
             </div>
             <div class='chal-divider'></div>
             <div class='chal-des'>
                 $challengedescription
                 <div class='input-group mb-3 chal-submit'>
-                <input autocomplete='off' autocorrect='off' type='text' class='form-control' placeholder='kqctf{flag}' aria-label='Flag' aria-describedby='flag-btn-' style='background: #FAFAFA' name='flaginput' id='flaginput'>
+                <input autocomplete='off' autocorrect='off' type='text' class='form-control' placeholder='$flagformat' aria-label='Flag' aria-describedby='flag-btn-' style='background: #FAFAFA' name='flaginput' id='flaginput'>
                 <div class='input-group-append''>
                     <button class='btn btn-outline-secondary' type='button' name='checkflagbtn' onClick='checkFlag(event);'>Submit</button>
                 </div>
                 </div>
             </div>
-            ";
-            if($challengefile != "" and !empty($challengefile))
-            {
-                $challengesHTML .= "
-                <div class='chal-downloads'>
-                <p style=\"margin-bottom: 3px;\">Downloads</p>
-                <div class=\"tag-container\"><a href=\"./Public/$challengefile\" class=\"ctflink\" download=\"\">$challengefile</a></div>
-                </div>
-                ";
-            }
+HTML;
 
-            $challengesHTML .= "
-            
+     if($challengefile != "" and !empty($challengefile)) {
+          $challengesHTML .= <<<HTML
+          <div class='chal-downloads'>
+          <p style="margin-bottom: 3px;">Downloads</p>
+          <div class="tag-container"><a href="./Public/{$challengefile}" class="ctflink" download="">{$challengefile}</a></div>
+          </div>
+          HTML;
+     }
 
-            
+     $challengesHTML .= <<<HTML
             </div>
         </div>
-        ";
-    }
+        HTML;
+}
 
-    echo $challengesHTML;
+echo $challengesHTML;
 ?>

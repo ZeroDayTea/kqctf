@@ -6,10 +6,13 @@
     $_SESSION['pagetodisplay'] = $pagetodisplay;
 
     $username = $_SESSION['logintoken'];
-    $query = "SELECT team FROM users WHERE username='$username';";
-    $result = mysqli_query($conn, $query);
-    $userrow = mysqli_fetch_array($result, MYSQLI_ASSOC);
+    $userquery = $conn->prepare("SELECT * FROM users WHERE username=?;");
+    $userquery->bind_param("s", $username);
+    $userquery->execute();
+    $userresult = $userquery->get_result();
+    $userrow = $userresult->fetch_assoc();
 
+    $team = $userrow['team'];
 ?>
 
 <!DOCTYPE html>
@@ -50,7 +53,6 @@
 
       <nav id="navbar" class="navbar">
         <ul>
-     <a href="<?php echo $_SESSION['discordlink'] ?>"><img src="/assets/img/discord.png" style="width:50px; padding-right:25%"></a>
           <li><a class="nav-link scrollto <?php if($_SESSION['pagetodisplay'] == 'home') {echo "active";} ?>" href="../ctfpage.php?page=home">Home</a></li>
           <li><a class="nav-link scrollto <?php if($_SESSION['pagetodisplay'] == 'leaderboard') {echo "active";} ?>" href="ctfpage.php?page=leaderboard">Leaderboard</a></li>
           <li><a class="nav-link scrollto <?php if($_SESSION['pagetodisplay'] == 'challenges') {echo "active";} ?>"" href="/ctfpage.php?page=challenges">Challenges</a></li>
@@ -83,11 +85,7 @@
     }
     else if($_GET['page'] == 'leaderboard')
     {
-      $username = $_SESSION['logintoken'];
-      $query2 = "SELECT * FROM users WHERE username='$username';";
-      $queryresult2 = mysqli_query($conn, $query2);
-      $userrow = mysqli_fetch_array($queryresult2, MYSQLI_ASSOC);
-      if($userrow['team'] === NULL)
+      if($team === NULL)
       {
         include($maindir . "team/team.php");
       }
@@ -98,11 +96,7 @@
     }
     else if($_GET['page'] == 'challenges')
     {
-      $username = $_SESSION['logintoken'];
-      $query2 = "SELECT * FROM users WHERE username='$username';";
-      $queryresult2 = mysqli_query($conn, $query2);
-      $userrow = mysqli_fetch_array($queryresult2, MYSQLI_ASSOC);
-      if($userrow['team'] === NULL)
+      if($team === NULL)
       {
         include($maindir . "team/team.php");
       }
