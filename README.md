@@ -8,7 +8,6 @@ To implement this for your own competition:
 1. Get a LAMP environment running with some distro of Linux, Apache, MySQL/MariaDB, and PHP (preferrably php8)
 2. Create a database on the system titled kqctf and add a user that has permissions to read and write from this SQL database
 3. Update the config/config.json file to reflect all the information in your competition including this user for your sql db
-5. Use the /admin/adminpanel endpoint to add challenges and release them
-6. [optional] Update the frontend html, css, and images to your liking. css and image files are contained under /assets/ directory
+4. [optional] Update the frontend html, css, and images to your liking. css and image files are contained under /assets/css and /assets/img directories respectively with replaceable default logo.png and favicon.png images
 
 kqctf's dynamic scoring equation is a variation of work for PBJarCTF which was based on rCTF. Partial credit for that work goes to the team at redpwn that originally developed this style of dynamic scoring in online competitions
