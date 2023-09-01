@@ -1,0 +1,13 @@
+{
+    "db_username": "",
+    "db_password": "",
+    "db_databasename": "",
+    "ctfname": "",
+    "discordlink": "",
+    "ctfmessage": "",
+    "flagformat": "",
+    "ctftimerend": "",
+    "ctftimertimezone": "",
+    "maxteamsize": 0,
+    "homepageinfo": ""
+}
