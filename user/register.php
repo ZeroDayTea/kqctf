@@ -1,5 +1,16 @@
 <?php
+// setting more secure session cookie properties
+ini_set('session.cookie_httponly', 1);
+ini_set('session.cookie_samesite', 'Strict');
+
+if(isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on") {
+    ini_set('session.cookie_secure', 1);
+}
+
+session_name('session');
+
 session_start();
+
 include("../config/config.php");
 ?>
 <!DOCTYPE html>

@@ -3,7 +3,7 @@
   <h3>Main Leaderboard: </h3>
   </div>
   <div class="row" style="justify-content: center;margin: 0;margin-bottom: 50px;display: flex;">
-<!--<div class="col-3">
+<div class="col-3">
   <div class="challengeBox">
     <div class="form-group">
       <label for="filtereligibility">Division</label>
@@ -16,7 +16,7 @@
       <br>
     </div>
   </div>
-</div>-->
+</div>
 <script>
   document.getElementById('leaderboardselect').addEventListener('change', function() {
     var selectedLeaderboard = this.value;

@@ -1,5 +1,16 @@
 <?php
+    // setting more secure session cookie properties
+    ini_set('session.cookie_httponly', 1);
+    ini_set('session.cookie_samesite', 'Strict');
+
+    if(isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on") {
+        ini_set('session.cookie_secure', 1);
+    }
+
+    session_name('session');
+
     session_start();
+
     include("../config/config.php");
 
     unset($errormsg);
@@ -9,7 +20,7 @@
       $username = $_POST['username'];
       $password = $_POST['password'];
 
-      $userquery = $conn->prepare("SELECT username, password FROM users WHERE username=?;");
+      $userquery = $conn->prepare("SELECT username, password, admin FROM users WHERE username=?;");
       $userquery->bind_param("s", $username);
       $userquery->execute();
       $userresult = $userquery->get_result();
@@ -23,7 +34,11 @@
           {
             $_SESSION['logintoken'] = $username;
 
+            // check if admin user
+            $_SESSION['admin'] = $userrow['admin'];
+
             header("location:/ctfpage?page=home");
+            exit;
           }
           else
           {

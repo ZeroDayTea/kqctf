@@ -1,15 +1,15 @@
 <?php
   include("../user/session.php");
   include("../config/config.php");
+
+  // page only available to admins
+  if(!$_SESSION['admin'])
+  {
+      header("Location:/user/logout");
+      exit;
+  }
+
   $username = $_SESSION['logintoken'];
-  if($username === $configjson["adminusername"])
-  {
-    echo "Authorized!";
-  }
-  else
-  {
-    header("Location:/user/logout");
-  }
 
   // used in table generation below
   $stmt = $conn->prepare("SELECT challengename FROM challenges WHERE released = 'false'");
@@ -17,57 +17,6 @@
   $result = $stmt->get_result();
   $counter = 1;
 ?>
-
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
-
-  <title><?php echo $_SESSION["ctfname"] ?> CTF</title>
-  <meta content="" name="description">
-  <meta content="" name="keywords">
-
-  <link href="/assets/img/favicon.png" rel="icon">
-  <link href="/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
-
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Roboto:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
-
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.1/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/boxicons/2.1.4/css/boxicons.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/glightbox/3.2.0/css/glightbox.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/10.2.0/swiper-bundle.min.css" rel="stylesheet">
-
-  <link href="/assets/css/style.css" rel="stylesheet">
-  <link href="/assets/css/ctf.css" rel="stylesheet">
-
-</head>
-
-<body style="background-color:#252525; margin: 0; padding: 0; height:100%; width: 100%;">
-
-  <header id="header" class="d-flex align-items-center">
-    <div class="container d-flex align-items-center justify-content-between">
-
-      <h1 class="logo"><a href="../ctfpage.php?page=home"><?php echo $_SESSION["ctfname"] ?> CTF<span>.</span></a></h1>
-
-
-      <nav id="navbar" class="navbar">
-        <ul>
-          <li><a class="nav-link scrollto <?php if($_SESSION['pagetodisplay'] == 'home') {echo "active";} ?>" href="/ctfpage.php?page=home">Home</a></li>
-          <li><a class="nav-link scrollto <?php if($_SESSION['pagetodisplay'] == 'leaderboard') {echo "active";} ?>" href="/ctfpage.php?page=leaderboard">Leaderboard</a></li>
-          <li><a class="nav-link scrollto <?php if($_SESSION['pagetodisplay'] == 'challenges') {echo "active";} ?>"" href="/ctfpage.php?page=challenges">Challenges</a></li>
-          <li><a class="nav-link scrollto <?php if($_SESSION['pagetodisplay'] == 'team') {echo "active";} ?>" href="/ctfpage.php?page=team">Team</a></li>
-          <li><a class="nav-link scrollto" href="/logout.php">Logout</a></li>
-        </ul>
-        <i class="bi bi-list mobile-nav-toggle"></i>
-      </nav>
-    </div>
-  </header>
-
-
   <main id="main">
 
     <section id="login" class="login" >
@@ -177,46 +126,81 @@
           <?php if(isset($_GET['message']) && $_GET['message'] == 'norelease') {echo '<br><h5 style="color:red; text-align:center"> You need to type \'yes\' exactly to relase challenges </h5>';} ?>
         </form>
       </div>
+
+      <div class="col-lg-7 center">
+        <form class="input-forms" onsubmit="event.preventDefault(); userLookup();">
+        <div class="section-title">
+            <h3><span>User Lookup</span></h3>
+        </div>
+        <div class="row">
+            <div class="col form-group">
+            <input type="text" class="form-control" name="userlookup" id="userlookup" placeholder="Username" required>
+            </div>
+        </div>
+        <br>
+        <script>
+            function userLookup() {
+            let username = document.getElementById("userlookup").value;
+            let locationto = "/ctfpage?page=admin&userlookup=" + username;
+            window.location = locationto;
+            }
+        </script>
+        <div class="text-center"><button type="submit" class="btn btn-primary">Lookup</button></div>
+        <br>
+        <table class="table scoreboard" style="border: none; background-color: white;">
+            <thead style="text-align: center;">
+            <tr>
+                <th style="width: 4em; border-top: none;">UserID</th>
+                <th style="width: 4em; border-top: none;">Username</th>
+                <th style="width: 4em; border-top: none;">Email</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php
+            if(isset($_GET['userlookup'])) {
+                $userlookup = $_GET['userlookup'];
+                $stmt = $conn->prepare("SELECT userid, email FROM users WHERE username=?");
+                $stmt->bind_param("s", $userlookup);
+                $stmt->execute();
+                $stmt->bind_result($userid, $useremail);
+                $stmt->fetch();
+                $stmt->close();
+
+                echo "<tr><th style=\"font-weight:normal;\">$userid</th><td style=\"font-weight:normal;\">$userlookup</td><td style=\"font-weight:normal;\">$useremail</td></tr>";
+            }
+            ?>
+            </tbody>
+        </table>
+        </form>
+        </div>
+
 </div>
 </section>
 
-      <div class="section-title">
-        <h2>Unreleased Challenges </h2>
-      </div>
-        <div class="col-6 center" style="min-height: 230px;">
-        <table class="table scoreboard" style="border: none; background-color: white;">
-        <thead style="text-align: center;">
-          <tr>
-            <th style="width: 4em;border-top: none;">#</th>
-            <th style="border-top: none;">Challenge Name</th>
-          </tr>
-        </thead>
-        <tbody style="text-align: center;" id="sc-teams">
-        <?php while ($row = $result->fetch_assoc()): ?>
-            <tr>
-                <td class="normal-font"><?= $counter ?></td>
-                <td class="normal-font"><?= htmlspecialchars($row['challengename']) ?></td>
-            </tr>
-            <?php $counter++; ?>
-        <?php endwhile; ?>
-        </tbody>
-        </table>
+<div class="section-title">
+<h2>Unreleased Challenges </h2>
+</div>
+<div class="col-6 center" style="min-height: 230px;">
+<table class="table scoreboard" style="border: none; background-color: white;">
+<thead style="text-align: center;">
+    <tr>
+    <th style="width: 4em;border-top: none;">#</th>
+    <th style="border-top: none;">Challenge Name</th>
+    </tr>
+</thead>
+<tbody style="text-align: center;" id="sc-teams">
+<?php while ($row = $result->fetch_assoc()): ?>
+    <tr>
+        <td class="normal-font"><?= $counter ?></td>
+        <td class="normal-font"><?= htmlspecialchars($row['challengename']) ?></td>
+    </tr>
+    <?php $counter++; ?>
+<?php endwhile; ?>
+</tbody>
+</table>
 
-        <style>
-            .normal-font {
-                font-weight: normal;
-            }
-        </style>
-
- <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
- <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.1/js/bootstrap.bundle.min.js"></script>
- <script src="https://cdnjs.cloudflare.com/ajax/libs/glightbox/3.2.0/js/glightbox.min.js"></script>
- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js"></script>
- <script src="https://cdn.jsdelivr.net/npm/@srexi/purecounterjs@1.1.1/js/purecounter.js"></script>
- <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/10.2.0/swiper-bundle.min.js"></script>
- <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/noframework.waypoints.min.js"></script>
- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-  <script src="/assets/js/main.js"></script>
-</body>
-</html>
+<style>
+    .normal-font {
+        font-weight: normal;
+    }
+</style>

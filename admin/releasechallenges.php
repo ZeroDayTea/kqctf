@@ -2,14 +2,14 @@
     include("../user/session.php");
     include("../config/config.php");
 
-    function redirectWithMessage($message) {
-        header("location:/admin/adminpanel.php?message=$message");
-        exit();
+    if (!$_SESSION['admin']) {
+        header("location:/user/logout");
+        exit;
     }
 
-    if ($_SESSION['logintoken'] !== $configjson['adminusername']) {
-        header("location:/user/logout");
-        exit();
+    function redirectWithMessage($message) {
+        header("location:/ctfpage?page=admin&message=$message");
+        exit;
     }
 
     if (!isset($_POST['releasechallenges'])) {

@@ -2,14 +2,14 @@
     include("../config/config.php");
     include("../user/session.php");
 
-    function redirectToAdminPanel($message) {
-        header("location:/admin/adminpanel?message=$message");
-        exit();
+    if (!$_SESSION['admin']) {
+        header("location:/user/logout");
+        exit;
     }
 
-    if (!isset($_SESSION['isAdmin']) || $_SESSION['isAdmin'] !== true) {
-        header("location:/user/logout");
-        exit()
+    function redirectToAdminPanel($message) {
+        header("location:/ctfpage?page=admin&message=$message");
+        exit;
     }
 
     $requiredParams = ['oldchallengename', 'challengename', 'challengedescription', 'challengeauthor', 'providedfile', 'solutionflag', 'category', 'basescore'];

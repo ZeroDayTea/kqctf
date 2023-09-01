@@ -12,6 +12,7 @@ if(isset($_POST['username']) && isset($_POST['password']) && isset($_POST['retyp
         if($password != $retypepassword)
         {
             header("location:/user/register?error=passwordsdonotmatch");
+            exit;
         }
 
         $passwordhash = password_hash($password, PASSWORD_DEFAULT);
@@ -39,7 +40,7 @@ if(isset($_POST['username']) && isset($_POST['password']) && isset($_POST['retyp
                 // if competing solo then create solo team
                 if($competingwith === "solo")
                 {
-                    $insertteam = $conn->prepare("INSERT INTO teams (teamname, password, points, mostrecentsoltime) VALUES (?, ?, 0, NULL);");
+                    $insertteam = $conn->prepare("INSERT INTO teams (teamname, password, points, leaderboard, mostrecentsoltime) VALUES (?, ?, 0, 'Open/College Division', NULL);");
                     $insertteam->bind_param("ss", $username, $passwordhash);
                     $insertteam->execute();
                     $teamid = $conn->insert_id;
@@ -53,25 +54,30 @@ if(isset($_POST['username']) && isset($_POST['password']) && isset($_POST['retyp
                 {
                     $insertuser->close();
                     header("location:/user/login");
+                    exit;
                 }
                 else
                 {
                     $insertuser->close();
                     header("location:/user/register?error=adminerror");
+                    exit;
                 }
             }
             else
             {
                 header("location:/user/register?error=emailtaken");
+                exit;
             }
         }
         else
         {
             header("location:/user/register?error=usernametaken");
+            exit;
         }
     }
     else
     {
         header("location:/user/register");
+        exit;
     }
 ?>

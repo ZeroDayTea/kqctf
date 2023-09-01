@@ -15,7 +15,7 @@ if(isset($_GET['team'])) {
 }
     if($team !== NULL) {
         // Fetch team info
-        $stmt = $conn->prepare("SELECT teamname FROM teams WHERE teamid=?");
+        $stmt = $conn->prepare("SELECT teamname, leaderboard FROM teams WHERE teamid=?");
         $stmt->bind_param("i", $team);
         $stmt->execute();
         $teamInfo = $stmt->get_result()->fetch_assoc();
@@ -137,6 +137,7 @@ if(isset($_GET['error']) && isset($errorMessages[$_GET['error']])) {
 <div class="section-title">
     <h2>Team Information</h2>
     <h3>Team: <?= htmlspecialchars($teamInfo['teamname']) ?></h3>
+    <h5>Leaderboard: <?= htmlspecialchars($teamInfo['leaderboard']) ?></h5>
 </div>
 <div class="col-6 center" style="min-height: 230px;">
     <table class="table scoreboard" style="border: none; background-color: white;">

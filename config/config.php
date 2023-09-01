@@ -26,9 +26,9 @@
     $_SESSION["discordlink"] = $configjson["discordlink"];
     $_SESSION["flagformat"] = $configjson["flagformat"];
 
-    function CTFCCCFormula($pts,$cnt) {
+    function CTFCCCFormula($pts, $cnt) {
         $base = $pts * 0.2;
-        $res = $base + (($pts - $base) / pow(1 + max(0,$cnt) / 100.92201,1.206069));
+        $res = $base + (($pts - $base) / pow(1 + max(0, $cnt) / 100.92201,1.206069));
         return max(1,round($res));
     }
 

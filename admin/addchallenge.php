@@ -2,14 +2,15 @@
     include("../config/config.php");
     include("../user/session.php");
 
-    function redirectWithMessage($message) {
-        header("location:/admin/adminpanel?message=$message");
-        exit();
+    // endpoint only available to admins
+    if (!$_SESSION['admin']) {
+        header("location:/user/logout");
+        exit;
     }
 
-    if ($_SESSION['logintoken'] !== $configjson['adminusername']) {
-        header("location:/user/logout");
-        exit();
+    function redirectWithMessage($message) {
+        header("location:/ctfpage?page=admin&message=$message");
+        exit;
     }
 
     $requiredFields = ['challengename', 'challengedescription', 'challengeauthor', 'providedfile', 'solutionflag', 'category', 'basescore'];

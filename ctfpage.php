@@ -48,16 +48,16 @@
   <header id="header" class="d-flex align-items-center">
     <div class="container d-flex align-items-center justify-content-between">
 
-     <h1 class="logo"><a href="/ctfpage.php?page=home"><?php echo $_SESSION["ctfname"] ?> CTF<span>.</span></a></h1>
-
+     <h1 class="logo"><a href="/ctfpage?page=home"><?php echo $_SESSION["ctfname"] ?> CTF<span>.</span></a></h1>
 
       <nav id="navbar" class="navbar">
         <ul>
-          <li><a class="nav-link scrollto <?php if($_SESSION['pagetodisplay'] == 'home') {echo "active";} ?>" href="../ctfpage.php?page=home">Home</a></li>
-          <li><a class="nav-link scrollto <?php if($_SESSION['pagetodisplay'] == 'leaderboard') {echo "active";} ?>" href="ctfpage.php?page=leaderboard">Leaderboard</a></li>
-          <li><a class="nav-link scrollto <?php if($_SESSION['pagetodisplay'] == 'challenges') {echo "active";} ?>"" href="/ctfpage.php?page=challenges">Challenges</a></li>
-          <li><a class="nav-link scrollto <?php if($_SESSION['pagetodisplay'] == 'team') {echo "active";} ?>" href="/ctfpage.php?page=team">Team</a></li>
-          <li><a class="nav-link scrollto" href="/user/logout.php">Logout</a></li>
+          <li><a class="nav-link scrollto <?php if($_SESSION['pagetodisplay'] == 'home') {echo "active";} ?>" href="../ctfpage?page=home">Home</a></li>
+          <li><a class="nav-link scrollto <?php if($_SESSION['pagetodisplay'] == 'leaderboard') {echo "active";} ?>" href="ctfpage?page=leaderboard">Leaderboard</a></li>
+          <li><a class="nav-link scrollto <?php if($_SESSION['pagetodisplay'] == 'challenges') {echo "active";} ?>"" href="/ctfpage?page=challenges">Challenges</a></li>
+          <li><a class="nav-link scrollto <?php if($_SESSION['pagetodisplay'] == 'team') {echo "active";} ?>" href="/ctfpage?page=team">Team</a></li>
+          <?php if($_SESSION['admin']) { $active = ''; if($_SESSION['pagetodisplay'] == 'admin') { $active = 'active'; }; echo "<li><a class=\"nav-link scrollto $active\" href=\"/ctfpage?page=admin\">Admin</a></li>"; } ?>
+          <li><a class="nav-link scrollto" href="/user/logout">Logout</a></li>
         </ul>
         <i class="bi bi-list mobile-nav-toggle"></i>
       </nav>
@@ -73,7 +73,6 @@
         // unix, linux, mac
         $maindir = __DIR__ . "/";
     }
-
     if(DIRECTORY_SEPARATOR === '\\') {
         // windows
         $maindir = addslashes(__DIR__) . "\\\\";
@@ -109,6 +108,11 @@
     else if($_GET['page'] == 'team')
     {
       include($maindir . "team/team.php");
+    }
+
+    else if($_GET['page'] == 'admin')
+    {
+      include($maindir . "admin/adminpanel.php");
     }
 
   ?>
