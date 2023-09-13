@@ -103,6 +103,8 @@
               <!-- Data will be appended here -->
             </div>
             <div class="modal-footer border-0">
+              <button type="button" class="btn btn-secondary" onclick="prevPage(data)">Previous</button>
+              <button type="button" class="btn btn-secondary" onclick="nextPage(data)">Next</button>
               <button type="button" class="btn btn-secondary" style="background-color: rgb(37, 37, 37);" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
@@ -149,29 +151,52 @@ $(document).ready(function(){
     });
 });
 
+var currentPage = 0;
+var resultsPerPage = 10;
+var data;
+
 function showSolves(challengename) {
-        $.ajax({
-                url: '/challenges/getsolves',
-            type: 'POST',
-            data: {challengename: challengename},
-            success: function(response){
-                var data = JSON.parse(response);
-                console.log(data);
-                var html = '<table class="table" style="border-radius: 10px; overflow: hidden;"><thead><tr><th>#</th><th>Team</th><th>Timestamp</th></tr></thead>';
-                html += '<tbody class="table">'
-                for(var i=0; i<data.length; i++){
-                    html += '<tr><td>' + (i+1) + '</td><td>' + data[i].teamname + '</td><td>' + data[i].solvetime + '</td></tr>';
-                }
-                html += '</tbody></table>';
-                $('#challengesolves-body').html(html);
-                $('#challengesolves-modal').show();
-            },
-            error: function(response) {
-                console.log("Error:");
-                console.log(response);
-            }
-            });
+    $.ajax({
+        url: '/challenges/getsolves',
+        type: 'POST',
+        data: {challengename: challengename},
+        success: function(response){
+            data = JSON.parse(response);
+            renderTable(data, 0);
+            $('#challengesolves-modal').show();
+        },
+        error: function(response) {
+            console.log("Error:");
+            console.log(response);
+        }
+    });
+}
+
+function renderTable(data, start) {
+    var end = start + resultsPerPage;
+    var html = '<table class="table" style="border-radius: 10px; overflow: hidden ;"><thead class="thead-dark"><tr><th>#</th><th>Team</th><th>Timestamp</th></tr></thead>';
+    html += '<tbody class="tbody-dark">';
+    for(var i=start; i<Math.min(end, data.length); i++){
+        html += '<tr><td>' + (i+1) + '</td><td>' + data[i].teamname + '</td><td>' + data[i].solvetime + '</td></tr>';
     }
+    html += '</tbody></table>';
+    $('#challengesolves-body').html(html);
+}
+
+function prevPage(data) {
+    currentPage = Math.max(0, currentPage - 1);
+    renderTable(data, currentPage * resultsPerPage);
+}
+
+function nextPage(data) {
+    // no results to show
+    if ((currentPage + 1) * resultsPerPage >= data.length) {
+        return;
+    }
+
+    currentPage = Math.min(data.length / resultsPerPage, currentPage + 1);
+    renderTable(data, currentPage * resultsPerPage);
+}
 </script>
 </div>
 
