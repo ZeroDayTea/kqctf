@@ -117,6 +117,19 @@ include("../config/config.php");
 
   <script src="../assets/js/main.js"></script>
 
+  <script>
+     window.addEventListener('load', () => {
+        AOS.init({
+                duration: 1000,
+        easing: 'ease-in-out',
+        once: true,
+        mirror: false
+        })
+        });
+  </script>
+
+
+
 </body>
 
 </html>

@@ -111,6 +111,7 @@ include("config/config.php");
   <div id="preloader"></div>
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.1/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/glightbox/3.2.0/js/glightbox.min.js"></script>
@@ -120,6 +121,18 @@ include("config/config.php");
   <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/noframework.waypoints.min.js"></script>
 
   <script src="/assets/js/main.js"></script>
+
+  <script>
+     window.addEventListener('load', () => {
+        AOS.init({
+                duration: 1000,
+        easing: 'ease-in-out',
+        once: true,
+        mirror: false
+        })
+     });
+  </script>
+
 </body>
 
 </html>

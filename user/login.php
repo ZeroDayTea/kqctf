@@ -136,6 +136,17 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/noframework.waypoints.min.js"></script>
 
   <script src="/assets/js/main.js"></script>
+
+  <script>
+     window.addEventListener('load', () => {
+        AOS.init({
+                duration: 1000,
+        easing: 'ease-in-out',
+        once: true,
+        mirror: false
+        })
+     });
+  </script>
 </body>
 
 </html>
