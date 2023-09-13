@@ -82,14 +82,14 @@ while($challengerow = $challengesResult->fetch_assoc()) {
                     <div class='chal-author'> {$challengeauthor} </div>
                 </div>
                 <div class='col-6 chal-leftcard'>
-                    <a href='ctfpage.php?page=challenges' target='_blank' class='chal-solves'> {$solves} solves /  {$pointsvalue} points</a>
+                    <a data-bs-toggle="modal" data-bs-target="#challengesolves-modal" href="#" class='chal-solves'> {$solves} solves /  {$pointsvalue} points</a>
                 </div>
             </div>
             <div class='chal-divider'></div>
             <div class='chal-des'>
                 $challengedescription
                 <div class='input-group mb-3 chal-submit'>
-                <input autocomplete='off' autocorrect='off' type='text' class='form-control' placeholder='$flagformat' aria-label='Flag' aria-describedby='flag-btn-' style='background: #FAFAFA' name='flaginput' id='flaginput'>
+                <input autocomplete='off' autocorrect='off' type='text' class='form-control' placeholder='$flagformat' aria-label='Flag' aria-describedby='flag-btn-' style='background: #FAFAFA' name='flaginput'>
                 <div class='input-group-append''>
                     <button class='btn btn-outline-secondary' type='button' name='checkflagbtn' onClick='checkFlag(event);'>Submit</button>
                 </div>

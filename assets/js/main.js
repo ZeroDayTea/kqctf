@@ -1,8 +1,7 @@
 
 (function() {
     "use strict";
-  
-  
+
     const select = (el, all = false) => {
       el = el.trim()
       if (all) {
@@ -11,8 +10,7 @@
         return document.querySelector(el)
       }
     }
-  
-   
+
     const on = (type, el, listener, all = false) => {
       let selectEl = select(el, all)
       if (selectEl) {
@@ -23,13 +21,11 @@
         }
       }
     }
-  
-  
+
     const onscroll = (el, listener) => {
       el.addEventListener('scroll', listener)
     }
-  
-  
+
     let navbarlinks = select('#navbar .scrollto', true)
     const navbarlinksActive = () => {
       let position = window.scrollY + 200
@@ -46,24 +42,22 @@
     }
     window.addEventListener('load', navbarlinksActive)
     onscroll(document, navbarlinksActive)
-  
-  
+
     const scrollto = (el) => {
       let header = select('#header')
       let offset = header.offsetHeight
-  
+
       if (!header.classList.contains('header-scrolled')) {
         offset -= 16
       }
-  
+
       let elementPos = select(el).offsetTop
       window.scrollTo({
         top: elementPos - offset,
         behavior: 'smooth'
       })
     }
-  
-  
+
     let selectHeader = select('#header')
     if (selectHeader) {
       let headerOffset = selectHeader.offsetTop
@@ -80,8 +74,7 @@
       window.addEventListener('load', headerFixed)
       onscroll(document, headerFixed)
     }
-  
-   
+
     let backtotop = select('.back-to-top')
     if (backtotop) {
       const toggleBacktotop = () => {
@@ -94,20 +87,17 @@
       window.addEventListener('load', toggleBacktotop)
       onscroll(document, toggleBacktotop)
     }
-  
-  
+
     on('click', '.mobile-nav-toggle', function(e) {
       select('#navbar').classList.toggle('navbar-mobile')
       this.classList.toggle('bi-list')
       this.classList.toggle('bi-x')
     })
-  
-  
-  
+
     on('click', '.scrollto', function(e) {
       if (select(this.hash)) {
         e.preventDefault()
-  
+
         let navbar = select('#navbar')
         if (navbar.classList.contains('navbar-mobile')) {
           navbar.classList.remove('navbar-mobile')
@@ -118,8 +108,7 @@
         scrollto(this.hash)
       }
     }, true)
-  
-  
+
     window.addEventListener('load', () => {
       if (window.location.hash) {
         if (select(window.location.hash)) {
@@ -127,21 +116,14 @@
         }
       }
     });
-  
-   
+
     let preloader = select('#preloader');
     if (preloader) {
       window.addEventListener('load', () => {
         preloader.remove()
       });
     }
-  
-  
-    const glightbox = GLightbox({
-      selector: '.glightbox'
-    });
-  
-  
+
     let skilsContent = select('.skills-content');
     if (skilsContent) {
       new Waypoint({
@@ -155,40 +137,23 @@
         }
       })
     }
-  
-  
-    new Swiper('.testimonials-slider', {
-      speed: 600,
-      loop: true,
-      autoplay: {
-        delay: 5000,
-        disableOnInteraction: false
-      },
-      slidesPerView: 'auto',
-      pagination: {
-        el: '.swiper-pagination',
-        type: 'bullets',
-        clickable: true
-      }
-    });
-  
-  
+
     window.addEventListener('load', () => {
       let portfolioContainer = select('.portfolio-container');
       if (portfolioContainer) {
         let portfolioIsotope = new Isotope(portfolioContainer, {
           itemSelector: '.portfolio-item'
         });
-  
+
         let portfolioFilters = select('#portfolio-flters li', true);
-  
+
         on('click', '#portfolio-flters li', function(e) {
           e.preventDefault();
           portfolioFilters.forEach(function(el) {
             el.classList.remove('filter-active');
           });
           this.classList.add('filter-active');
-  
+
           portfolioIsotope.arrange({
             filter: this.getAttribute('data-filter')
           });
@@ -197,37 +162,16 @@
           });
         }, true);
       }
-  
+
     });
-  
-   
-    const portfolioLightbox = GLightbox({
-      selector: '.portfolio-lightbox'
-    });
-  
-  
-    new Swiper('.portfolio-details-slider', {
-      speed: 400,
-      loop: true,
-      autoplay: {
-        delay: 5000,
-        disableOnInteraction: false
-      },
-      pagination: {
-        el: '.swiper-pagination',
-        type: 'bullets',
-        clickable: true
-      }
-    });
-  
-  
-    window.addEventListener('load', () => {
+
+    /*window.addEventListener('load', () => {
       AOS.init({
         duration: 1000,
         easing: 'ease-in-out',
         once: true,
         mirror: false
       })
-    });
-  
+    });*/
+
   })()
